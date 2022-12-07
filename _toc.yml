@@ -1,0 +1,8 @@
+format: jb-book
+root: README.md
+parts:
+  - caption: 用户故事
+    chapters:
+      - file: user_stories/user_stories/README.md
+      - file: user_stories/prototypes/README.md
+      - file: user_stories/roadmaps/README.md
