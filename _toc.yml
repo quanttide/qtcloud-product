@@ -4,5 +4,11 @@ parts:
   - caption: 用户故事
     chapters:
       - file: user_stories/user_stories/README.md
+        section:
+          - file: user_stories/user_stories/user_story_mapping/README.md
+          - file: user_stories/user_stories/user_story/README.md
+            section:
+              - file: user_stories/user_stories/user_story/show_user_story.md
+              - file: user_stories/user_stories/user_story/edit_user_story.md
       - file: user_stories/prototypes/README.md
       - file: user_stories/roadmaps/README.md
