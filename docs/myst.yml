@@ -1,0 +1,28 @@
+# See docs at: https://mystmd.org
+version: 1
+project:
+  title: 量潮产品云
+  description: QtCloud Product 产品文档
+  keywords: []
+  authors: []
+  toc:
+    - file: index.md
+    - title: PRD（产品需求文档）
+      children:
+        - file: prd/README.md
+        - file: prd/stories/stories/README.md
+        - file: prd/stories/stories/user_story_mapping/README.md
+        - file: prd/stories/stories/user_story/README.md
+        - file: prd/stories/stories/user_story/edit_user_story.md
+        - file: prd/stories/stories/user_story/show_user_story.md
+        - file: prd/stories/prototypes/README.md
+        - file: prd/stories/roadmaps/README.md
+    - title: ADD（架构设计文档）
+      children:
+        - file: add/README.md
+    - title: IXD（交互设计文档）
+      children:
+        - file: ixd/README.md
+        - file: ixd/components/story_map_canvas.md
+site:
+  template: book-theme
