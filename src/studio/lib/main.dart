@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'models/story_map_models.dart';
+import 'data/seed_data.dart';
+import 'models/product_models.dart';
 import 'widgets/story_map_canvas.dart';
 
 void main() {
@@ -7,7 +8,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,208 +18,144 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         useMaterial3: true,
       ),
-      home: const HomePage(),
+      home: const PortfolioPage(),
     );
   }
 }
 
-class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+/// 产品组合页：集中展示所有产品及其设计思路
+///
+/// 组合视图（规划中的核心视图）的当前形态：产品卡片列表。
+/// 点击产品进入该产品的用户故事地图画布。
+class PortfolioPage extends StatelessWidget {
+  const PortfolioPage({super.key});
 
-  static StoryMap _createSampleData() {
-    // 第一个活动：对话（Dialogue）
-    final dialogueActivity = UserActivity(
-      id: 'activity-1',
-      title: '对话 (Dialogue)',
-      order: 0,
-      tasks: [
-        UserTask(
-          id: 'task-1',
-          title: '开始对话',
-          activityId: 'activity-1',
-          order: 0,
-          stories: [
-            UserStory(
-              id: 'story-1',
-              title: '输入消息到聊天框',
-              taskId: 'task-1',
-              phase: ReleasePhase.mvp,
-              status: StoryStatus.done,
-            ),
-            UserStory(
-              id: 'story-2',
-              title: '查看 AI 回复',
-              taskId: 'task-1',
-              phase: ReleasePhase.mvp,
-              status: StoryStatus.done,
-            ),
-          ],
+  void _openProduct(BuildContext context, Product product) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => StoryMapCanvasPage(
+          mapData: product.storyMap,
+          onStoryMove: (story, newTaskId) {
+            debugPrint('故事移动: ${story.title} -> 任务 $newTaskId');
+          },
+          onStoryTap: (story) {
+            debugPrint('点击故事: ${story.title}');
+          },
+          onMVPLineMove: (position) {
+            debugPrint(
+              'Release Line 移动到: ${(position * 100).toStringAsFixed(1)}%',
+            );
+          },
         ),
-        UserTask(
-          id: 'task-2',
-          title: '采纳便签',
-          activityId: 'activity-1',
-          order: 1,
-          stories: [
-            UserStory(
-              id: 'story-3',
-              title: '查看便签建议卡片',
-              taskId: 'task-2',
-              phase: ReleasePhase.mvp,
-              status: StoryStatus.inProgress,
-            ),
-            UserStory(
-              id: 'story-4',
-              title: '点击采纳',
-              taskId: 'task-2',
-              phase: ReleasePhase.mvp,
-              status: StoryStatus.inProgress,
-            ),
-          ],
-        ),
-      ],
-    );
-
-    // 第二个活动：白板（Whiteboard）
-    final whiteboardActivity = UserActivity(
-      id: 'activity-2',
-      title: '白板 (Whiteboard)',
-      order: 1,
-      tasks: [
-        UserTask(
-          id: 'task-3',
-          title: '挑选便签',
-          activityId: 'activity-2',
-          order: 0,
-          stories: [
-            UserStory(
-              id: 'story-5',
-              title: '浏览便签列表',
-              taskId: 'task-3',
-              phase: ReleasePhase.mvp,
-              status: StoryStatus.done,
-            ),
-            UserStory(
-              id: 'story-6',
-              title: '勾选需要的便签',
-              taskId: 'task-3',
-              phase: ReleasePhase.mvp,
-              status: StoryStatus.inProgress,
-            ),
-          ],
-        ),
-        UserTask(
-          id: 'task-4',
-          title: '生成备忘',
-          activityId: 'activity-2',
-          order: 1,
-          stories: [
-            UserStory(
-              id: 'story-7',
-              title: '点击"生成备忘录"按钮',
-              taskId: 'task-4',
-              phase: ReleasePhase.future,
-              status: StoryStatus.todo,
-            ),
-            UserStory(
-              id: 'story-8',
-              title: '自动跳转至画布',
-              taskId: 'task-4',
-              phase: ReleasePhase.future,
-              status: StoryStatus.todo,
-            ),
-          ],
-        ),
-      ],
-    );
-
-    // 第三个活动：笔记（Notebook）
-    final notebookActivity = UserActivity(
-      id: 'activity-3',
-      title: '笔记 (Notebook)',
-      order: 2,
-      tasks: [
-        UserTask(
-          id: 'task-5',
-          title: '编辑备忆',
-          activityId: 'activity-3',
-          order: 0,
-          stories: [
-            UserStory(
-              id: 'story-9',
-              title: '查看自动生成草稿',
-              taskId: 'task-5',
-              phase: ReleasePhase.future,
-              status: StoryStatus.todo,
-            ),
-            UserStory(
-              id: 'story-10',
-              title: '选择收件人',
-              taskId: 'task-5',
-              phase: ReleasePhase.future,
-              status: StoryStatus.todo,
-            ),
-            UserStory(
-              id: 'story-11',
-              title: '选择目的',
-              taskId: 'task-5',
-              phase: ReleasePhase.future,
-              status: StoryStatus.todo,
-            ),
-          ],
-        ),
-        UserTask(
-          id: 'task-6',
-          title: '发送结果',
-          activityId: 'activity-3',
-          order: 1,
-          stories: [
-            UserStory(
-              id: 'story-12',
-              title: '点击"发送"按钮',
-              taskId: 'task-6',
-              phase: ReleasePhase.future,
-              status: StoryStatus.todo,
-            ),
-            UserStory(
-              id: 'story-13',
-              title: '显示成功提示 (Toast)',
-              taskId: 'task-6',
-              phase: ReleasePhase.future,
-              status: StoryStatus.todo,
-            ),
-          ],
-        ),
-      ],
-    );
-
-    return StoryMap(
-      id: 'map-1',
-      name: 'AI 协作平台用户故事地图',
-      activities: [
-        dialogueActivity,
-        whiteboardActivity,
-        notebookActivity,
-      ],
-      mvpLinePosition: 0.45,
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final sampleData = _createSampleData();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('QtCloud Studio · 产品组合'),
+        backgroundColor: const Color(0xFF2C3E50),
+        elevation: 0,
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16.0),
+        children: [
+          for (final product in seedPortfolio)
+            _ProductCard(
+              product: product,
+              onTap: () => _openProduct(context, product),
+            ),
+        ],
+      ),
+    );
+  }
+}
 
-    return StoryMapCanvasPage(
-      mapData: sampleData,
-      onStoryMove: (story, newTaskId) {
-        debugPrint('故事移动: ${story.title} -> 任务 $newTaskId');
-      },
-      onStoryTap: (story) {
-        debugPrint('点击故事: ${story.title}');
-      },
-      onMVPLineMove: (position) {
-        debugPrint('Release Line 移动到: ${(position * 100).toStringAsFixed(1)}%');
-      },
+/// 产品卡片：名称、定位、设计思路与故事规模概览
+class _ProductCard extends StatelessWidget {
+  final Product product;
+  final VoidCallback onTap;
+
+  const _ProductCard({required this.product, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 16.0),
+      elevation: 2,
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      product.name,
+                      style: const TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10.0,
+                      vertical: 4.0,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE74C3C),
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    child: Text(
+                      '${product.mvpStories}/${product.totalStories} MVP',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12.0,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6.0),
+              Text(
+                product.tagline,
+                style: TextStyle(
+                  fontSize: 14.0,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey[800],
+                ),
+              ),
+              const SizedBox(height: 8.0),
+              Text(
+                '设计思路：${product.designIdea}',
+                style: TextStyle(
+                  fontSize: 13.0,
+                  height: 1.5,
+                  color: Colors.grey[700],
+                ),
+              ),
+              const SizedBox(height: 8.0),
+              Text(
+                '${product.storyMap.activities.length} 个用户活动 · '
+                '${product.storyMap.activities.expand((a) => a.tasks).length} '
+                '个用户任务 · ${product.totalStories} 个用户故事',
+                style: TextStyle(
+                  fontSize: 12.0,
+                  color: Colors.grey[600],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
