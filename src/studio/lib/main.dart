@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
-import 'data/seed_data.dart';
+import 'data/seed_loader.dart';
 import 'models/product_models.dart';
 import 'models/story_map_models.dart';
 import 'widgets/story_map_canvas.dart';
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // 种子数据由 CLI 加工于 assets/data/products.json，Studio 仅加载渲染
+  final products = await loadSeedProducts();
+  runApp(MyApp(products: products));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final List<Product> products;
+
+  const MyApp({super.key, required this.products});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +24,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         useMaterial3: true,
       ),
-      home: const ProductCloudPage(),
+      home: ProductCloudPage(products: products),
     );
   }
 }
@@ -36,7 +41,9 @@ enum ProductModule {
 /// 产品云主界面（参考项目管理软件）：
 /// 顶部产品切换器（每个产品 = 一个项目空间）+ 产品空间侧边导航 + 模块内容区
 class ProductCloudPage extends StatefulWidget {
-  const ProductCloudPage({super.key});
+  final List<Product> products;
+
+  const ProductCloudPage({super.key, required this.products});
 
   @override
   State<ProductCloudPage> createState() => _ProductCloudPageState();
@@ -49,7 +56,7 @@ class _ProductCloudPageState extends State<ProductCloudPage> {
   @override
   void initState() {
     super.initState();
-    _selectedProduct = seedProducts.first;
+    _selectedProduct = widget.products.first;
   }
 
   void _openProduct(Product product) {
@@ -112,7 +119,7 @@ class _ProductCloudPageState extends State<ProductCloudPage> {
                   tooltip: '切换产品',
                   onSelected: _openProduct,
                   itemBuilder: (context) => [
-                    for (final product in seedProducts)
+                    for (final product in widget.products)
                       PopupMenuItem<Product>(
                         key: Key('switch-${product.id}'),
                         value: product,
@@ -181,8 +188,7 @@ class _ProductCloudPageState extends State<ProductCloudPage> {
                   product: _selectedProduct,
                   selectedModule: _selectedModule,
                   onSelectModule: _openModule,
-                ),
-                Expanded(
+                ),                Expanded(
                   child: switch (_selectedModule) {
                     ProductModule.requirements => StoryMapCanvasView(
                         mapData: _selectedProduct.storyMap,

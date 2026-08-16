@@ -34,4 +34,22 @@ class Product {
 
   @override
   String toString() => 'Product(id: $id, name: $name, stories: $totalStories)';
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+        'tagline': tagline,
+        'designIdea': designIdea,
+        'storyMap': storyMap.toJson(),
+      };
+
+  factory Product.fromJson(Map<String, dynamic> json) {
+    return Product(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      tagline: json['tagline'] as String? ?? '',
+      designIdea: json['designIdea'] as String? ?? '',
+      storyMap: StoryMap.fromJson(json['storyMap'] as Map<String, dynamic>),
+    );
+  }
 }

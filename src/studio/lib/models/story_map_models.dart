@@ -63,6 +63,28 @@ class UserStory {
   @override
   String toString() =>
       'UserStory(id: $id, title: $title, phase: ${phase.label})';
+
+  /// JSON 序列化（CLI 加工种子数据时使用）
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'title': title,
+        'taskId': taskId,
+        'phase': phase.name,
+        'status': status.name,
+        if (description != null) 'description': description,
+      };
+
+  /// JSON 反序列化（Studio 加载种子数据时使用）
+  factory UserStory.fromJson(Map<String, dynamic> json) {
+    return UserStory(
+      id: json['id'] as String,
+      title: json['title'] as String,
+      taskId: json['taskId'] as String,
+      phase: ReleasePhase.values.byName(json['phase'] as String),
+      status: StoryStatus.values.byName(json['status'] as String),
+      description: json['description'] as String?,
+    );
+  }
 }
 
 // ============= 第二层：用户任务 =============
@@ -103,6 +125,27 @@ class UserTask {
   @override
   String toString() =>
       'UserTask(id: $id, title: $title, storiesCount: ${stories.length})';
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'title': title,
+        'activityId': activityId,
+        'order': order,
+        'stories': [for (final story in stories) story.toJson()],
+      };
+
+  factory UserTask.fromJson(Map<String, dynamic> json) {
+    return UserTask(
+      id: json['id'] as String,
+      title: json['title'] as String,
+      activityId: json['activityId'] as String,
+      order: json['order'] as int? ?? 0,
+      stories: [
+        for (final story in json['stories'] as List<dynamic>? ?? const [])
+          UserStory.fromJson(story as Map<String, dynamic>),
+      ],
+    );
+  }
 }
 
 // ============= 第一层：用户活动 =============
@@ -143,6 +186,27 @@ class UserActivity {
   @override
   String toString() =>
       'UserActivity(id: $id, title: $title, tasksCount: ${tasks.length})';
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'title': title,
+        'order': order,
+        if (color != null) 'color': color,
+        'tasks': [for (final task in tasks) task.toJson()],
+      };
+
+  factory UserActivity.fromJson(Map<String, dynamic> json) {
+    return UserActivity(
+      id: json['id'] as String,
+      title: json['title'] as String,
+      order: json['order'] as int? ?? 0,
+      color: json['color'] as String?,
+      tasks: [
+        for (final task in json['tasks'] as List<dynamic>? ?? const [])
+          UserTask.fromJson(task as Map<String, dynamic>),
+      ],
+    );
+  }
 }
 
 // ============= 顶层容器：故事地图 =============
@@ -178,4 +242,23 @@ class StoryMap {
   @override
   String toString() =>
       'StoryMap(id: $id, name: $name, activitiesCount: ${activities.length})';
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+        'mvpLinePosition': mvpLinePosition,
+        'activities': [for (final activity in activities) activity.toJson()],
+      };
+
+  factory StoryMap.fromJson(Map<String, dynamic> json) {
+    return StoryMap(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      mvpLinePosition: (json['mvpLinePosition'] as num?)?.toDouble() ?? 0.33,
+      activities: [
+        for (final activity in json['activities'] as List<dynamic>? ?? const [])
+          UserActivity.fromJson(activity as Map<String, dynamic>),
+      ],
+    );
+  }
 }

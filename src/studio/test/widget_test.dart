@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:studio/data/seed_data.dart';
+import 'package:studio/data/seed_loader.dart';
 import 'package:studio/main.dart';
+import 'package:studio/models/product_models.dart';
 
 void main() {
+  late List<Product> products;
+
+  setUpAll(() async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    products = await loadSeedProducts();
+  });
+
   test('种子数据包含三个实验产品且各有故事地图', () {
-    expect(seedProducts.length, 3);
-    for (final product in seedProducts) {
+    expect(products.length, 3);
+    expect([for (final p in products) p.id],
+        ['qtcloud-devops', 'qtcloud-product', 'qtcloud-code']);
+    for (final product in products) {
       expect(product.storyMap.activities, isNotEmpty);
       expect(product.totalStories, greaterThan(0));
     }
@@ -18,7 +28,7 @@ void main() {
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.reset);
 
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(MyApp(products: products));
 
     // 顶部产品切换器（默认第一个产品 qtcloud-devops）
     expect(find.text('量潮产品云'), findsOneWidget);
@@ -43,14 +53,13 @@ void main() {
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.reset);
 
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(MyApp(products: products));
 
     await tester.tap(find.byKey(const Key('product-switcher')));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('switch-qtcloud-product')));
     await tester.pumpAndSettle();
 
-    // 空间切换：需求看板内容变为该产品
     expect(find.text('管理用户故事'), findsOneWidget);
     expect(find.text('制定版本计划'), findsOneWidget);
     expect(find.text('管理产品组合'), findsOneWidget);
@@ -61,7 +70,7 @@ void main() {
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.reset);
 
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(MyApp(products: products));
 
     await tester.tap(find.byKey(const Key('nav-specification')));
     await tester.pumpAndSettle();
@@ -78,17 +87,14 @@ void main() {
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.reset);
 
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(MyApp(products: products));
 
-    // MVP 行包含 devops 的 MVP 故事
     expect(find.text('查看迭代计划与待办'), findsOneWidget);
 
-    // 折叠 MVP 行
     await tester.tap(find.byKey(const Key('release-toggle-MVP 版本')));
     await tester.pumpAndSettle();
     expect(find.text('查看迭代计划与待办'), findsNothing);
 
-    // 展开后恢复
     await tester.tap(find.byKey(const Key('release-toggle-MVP 版本')));
     await tester.pumpAndSettle();
     expect(find.text('查看迭代计划与待办'), findsOneWidget);
