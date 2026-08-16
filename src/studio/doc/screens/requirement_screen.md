@@ -112,7 +112,7 @@ SingleChildScrollView(           // 外层：垂直滚动
 
 演进要点：
 
-- 领域模型的 `StoryPriority` 已删除，改为 `ReleasePhase`（`mvp('MVP 版本')` / `future('未来迭代')`），卡片右上角状态圆点保留（🟢 完成 / 🟡 进行中 / ⚪ 待办）。
+- 领域模型的 `StoryPriority` 已删除，改为 `ReleasePhase`（`mvp('MVP 版本')` / `future('未来迭代')`）；故事卡片精简为仅展示标题。
 - 新设计把「一条虚线 + 两段」升级为「多 Release 行」：行与行之间天然是发布边界，不再需要可拖动的绝对定位线，滚动场景下也不会错位。
 
 ---
@@ -158,7 +158,7 @@ class RequirementScreen extends StatelessWidget {
    - `TaskColumn` → `TaskLayerRow`（任务层，flex 对齐）
    - 新增 `ReleaseRow`（故事行，可折叠）
 3. **交互层**：拖拽（`DragTarget` 目标从 TaskColumn 变为矩阵列容器）、Release Line 虚线移除、折叠展开新增。
-4. **视觉层**：活动/任务层改用橙/紫规范色；故事卡片样式保留（白底细边框 + 状态圆点）。
+4. **视觉层**：活动/任务层改用橙/紫规范色；故事卡片精简为仅展示标题（白底细边框）。
 
 ---
 
