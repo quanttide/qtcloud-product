@@ -10,13 +10,16 @@
 
 ```
 src/studio/lib/
-├── main.dart                           # 应用入口，包含示例数据
+├── main.dart                           # 应用入口，种子数据（三个产品）
+├── data/
+│   └── seed_data.dart                 # 种子数据：三个实验产品的故事地图
 ├── models/
+│   ├── product_models.dart            # 领域模型：产品（组合层第二层）
 │   └── story_map_models.dart          # 领域模型：数据层（核心业务逻辑）
 └── widgets/
     ├── story_card.dart                # UI 组件：故事卡片（最小单元）
-    ├── task_card.dart                 # UI 组件：任务卡片（容器）
-    ├── activity_lane.dart             # UI 组件：活动泳道（横向容器）
+    ├── task_column.dart               # UI 组件：用户任务列（最小列）
+    ├── activity_section.dart          # UI 组件：用户活动分组（上级分组）
     └── story_map_canvas.dart          # UI 组件：故事地图画布（根组件）
 ```
 
@@ -29,13 +32,13 @@ src/studio/lib/
 完整实现了三层领域模型 + 容器结构：
 
 #### 1️⃣ 枚举类型
-- **StoryPriority**：故事优先级（Must/Should/Could）
+- **ReleasePhase**：发布阶段（MVP 版本 / 未来迭代）
 - **StoryStatus**：故事状态（To Do/In Progress/Done）
 
 #### 2️⃣ 数据类
 | 类名 | 职责 | 主要属性 |
 |------|------|--------|
-| `UserStory` | 用户故事（细节层） | id, title, taskId, priority, status, description |
+| `UserStory` | 用户故事（细节层） | id, title, taskId, phase, status, description |
 | `UserTask` | 用户任务（骨架层） | id, title, activityId, stories[], order |
 | `UserActivity` | 用户活动（主干层） | id, title, tasks[], order, color |
 | `StoryMap` | 故事地图（容器） | id, name, activities[], mvpLinePosition |
@@ -53,8 +56,8 @@ src/studio/lib/
 **职责**: 展示单个 UserStory 的最小视觉单元
 
 **特点**:
-- 三层信息展示：标题 → 优先级标签 → 状态标签
-- 根据优先级自动分配颜色（红/黄/蓝）
+- 三层信息展示：标题（用户语言）→ 描述（具体命令/细节）→ 发布阶段
+- 状态用右上角小圆点（🟢 完成 / 🟡 进行中 / ⚪ 待办），不做大色块
 - 支持长按（onLongPress）和点击（onTap）交互
 - 拖拽时显示半透明效果
 
@@ -67,43 +70,37 @@ StoryCard(
 )
 ```
 
-#### 🎫 TaskCard（任务卡片）
-**文件**: [widgets/task_card.dart](src/studio/lib/widgets/task_card.dart)
+#### 🎫 TaskColumn（用户任务列）
+**文件**: [widgets/task_column.dart](src/studio/lib/widgets/task_column.dart)
 
-**职责**: 展示单个 UserTask，作为 StoryCard 的容器
+**职责**: 展示单个 UserTask 的最小列，作为 StoryCard 的容器
 
 **特点**:
-- 任务标题显示在顶部（深灰色背景）
-- 内部使用 `DragTarget` 接收拖放的故事卡片
-- 支持跨任务拖拽（从一个任务拖到另一个任务）
+- 任务标题显示在列头（白底）
+- 列内使用 `DragTarget` 接收拖放的故事卡片
+- 支持跨任务拖拽（从一个任务列拖到另一个任务列）
 - 拖拽有效区域时显示绿色边框反馈
 - 纵向堆叠所有属于该任务的故事
 
 **代码示例**:
 ```dart
-TaskCard(
+TaskColumn(
   task: userTask,
   onStoryMove: (story, newTaskId) => updateTask(story, newTaskId),
   onStoryTap: (story) => navigateToDetail(story),
 )
 ```
 
-#### 🏊 ActivityLane（活动泳道）
-**文件**: [widgets/activity_lane.dart](src/studio/lib/widgets/activity_lane.dart)
+#### 🗂️ ActivitySection（用户活动分组）
+**文件**: [widgets/activity_section.dart](src/studio/lib/widgets/activity_section.dart)
 
-**职责**: 展示单个 UserActivity，作为任务卡片的横向容器
+**职责**: 展示单个 UserActivity 的上级分组，作为任务列的容器
 
 **特点**:
-- 固定宽度 300pt 的泳道设计
-- 根据活动顺序自动分配背景色和标题栏颜色（6种配色循环）
-- 活动标题在顶部，任务卡片纵向堆叠
-- 内部可纵向滚动（当任务过多时）
-- 彩色边框和阴影，视觉上清晰区分
-
-**配色方案**:
-```
-订购流程 (蓝色)  →  支付流程 (绿色)  →  售后服务 (黄色)
-```
+- 用户活动是包含用户任务的上级分组（取消"泳道"概念）
+- 分组标题 + 小色标（6 种配色循环，仅作轻度区隔）
+- 组内任务列横向排列（可横向滚动），分组自上而下排列
+- 浅色底 + 细边框，视觉减负
 
 #### 🎨 StoryMapCanvasPage（故事地图画布）
 **文件**: [widgets/story_map_canvas.dart](src/studio/lib/widgets/story_map_canvas.dart)
@@ -111,24 +108,25 @@ TaskCard(
 **职责**: 整个地图的根组件，协调所有子组件的显示和交互
 
 **特点**:
-- 顶部 AppBar 显示地图名称
-- **横向滚动**：用户可以横向浏览所有活动泳道
-- **左侧优先级标签栏**：显示 MUST/SHOULD/COULD 三个优先级
+- 内容区头部显示"量潮产品云 · 产品名"
+- **垂直滚动**：用户可以纵向浏览所有用户活动分组
+- **三层结构**：用户活动（分组）→ 用户任务（最小列）→ 用户故事（卡片）
 - **拖拽交互已实现**：
   - ✅ 使用 `LongPressDraggable` + `DragTarget` 架构
   - ✅ 故事卡片被拖动时显示反馈
-  - ✅ 拖入 TaskCard 的 DragTarget 区域时显示绿色高亮
+  - ✅ 拖入 TaskColumn 的 DragTarget 区域时显示绿色高亮
   - ✅ 支持跨任务移动故事
-- **颜色区分**：不同活动使用不同背景颜色
+- **发布线**：细浅色虚线，可拖动，区分 MVP 与未来迭代
 
 **架构示意**:
 ```
-SingleChildScrollView (横向)
-  └── Row (水平排列)
-      ├── 左侧优先级栏
-      └── ActivityLane × N (多个泳道)
-          └── TaskCard × M (多个任务)
-              └── StoryCard × K (多个故事)
+SingleChildScrollView (纵向)
+  └── Column (活动分组自上而下排列)
+      └── ActivitySection × N (多个活动分组)
+          └── SingleChildScrollView (横向)
+              └── Row (任务列横向排列)
+                  └── TaskColumn × M (多个任务列)
+                      └── StoryCard × K (多个故事卡片)
 ```
 
 ---
@@ -148,7 +146,7 @@ LongPressDraggable<UserStory>(
   child: StoryCard(...),           // 正常状态
 )
 
-// TaskCard 内部使用 DragTarget 接收故事
+// TaskColumn 内部使用 DragTarget 接收故事
 DragTarget<UserStory>(
   onAcceptWithDetails: (details) {
     // 故事被放入此任务
@@ -297,13 +295,14 @@ flutter run -d android
 
 | 文件 | 行数 | 职责 |
 |------|------|------|
-| main.dart | ~187 | 应用入口 + 示例数据 |
+| main.dart | — | 应用入口 + 侧边导航 + 产品画布视图 |
+| seed_data.dart | — | 种子数据（三个实验产品） |
+| product_models.dart | — | 产品领域模型 |
 | story_map_models.dart | ~157 | 数据模型定义 |
 | story_card.dart | ~114 | 故事卡片组件 |
-| task_card.dart | ~96 | 任务卡片组件 |
-| activity_lane.dart | ~108 | 活动泳道组件 |
+| task_column.dart | — | 用户任务列组件 |
+| activity_section.dart | — | 用户活动分组组件 |
 | story_map_canvas.dart | ~120 | 画布根组件 |
-| **总计** | **~782** | **完整可运行的应用** |
 
 ---
 

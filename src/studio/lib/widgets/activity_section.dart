@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import '../models/story_map_models.dart';
-import 'task_card.dart';
+import 'task_column.dart';
 
-/// 泳道容器
-/// 代表一个 UserActivity 的横向容器
+/// 用户活动分组（用户活动 → 用户任务 → 用户故事 的第一层）
 ///
-/// 视觉减负约定：
-/// - 所有泳道统一浅灰底 + 细边框，不用整列大色块
-/// - 列头为白底 + 小色标（4px 竖条）+ 彩色文字，仅作轻度区隔
-class ActivityLane extends StatelessWidget {
+/// 取消"泳道"概念：用户活动是包含用户任务的上级分组，
+/// 组内以"用户任务"为最小列横向排列；分组自上而下排列。
+class ActivitySection extends StatelessWidget {
   final UserActivity activity;
   final Function(UserStory, String)? onStoryMove;
   final Function(UserStory)? onStoryTap;
 
-  const ActivityLane({
+  const ActivitySection({
+    super.key,
     required this.activity,
     this.onStoryMove,
     this.onStoryTap,
@@ -36,24 +35,18 @@ class ActivityLane extends StatelessWidget {
     final accentColor = _getAccentColor(activity.order);
 
     return Container(
-      width: 300.0,
-      margin: const EdgeInsets.symmetric(horizontal: 8.0),
-      padding: const EdgeInsets.all(12.0),
+      margin: const EdgeInsets.only(bottom: 16.0),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
+        color: Colors.white,
         border: Border.all(color: Colors.grey[200]!, width: 1.0),
         borderRadius: BorderRadius.circular(8.0),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 列头：白底 + 小色标 + 彩色文字（非整列色块）
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(4.0),
-            ),
+          // 活动头：小色标 + 标题
+          Padding(
+            padding: const EdgeInsets.fromLTRB(14, 12, 14, 10),
             child: Row(
               children: [
                 Container(
@@ -64,7 +57,7 @@ class ActivityLane extends StatelessWidget {
                     borderRadius: BorderRadius.circular(2.0),
                   ),
                 ),
-                const SizedBox(width: 6.0),
+                const SizedBox(width: 8.0),
                 Expanded(
                   child: Text(
                     activity.title,
@@ -80,34 +73,36 @@ class ActivityLane extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 12.0),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  ...activity.tasks.map((task) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: TaskCard(
-                        task: task,
-                        onStoryMove: onStoryMove,
-                        onStoryTap: onStoryTap,
-                      ),
-                    );
-                  }).toList(),
-                  if (activity.tasks.isEmpty)
-                    Center(
-                      child: Text(
-                        '(no tasks)',
-                        style: TextStyle(
-                          fontSize: 12.0,
-                          color: Colors.grey[400],
-                          fontStyle: FontStyle.italic,
-                        ),
+          // 任务列：组内最小列，横向排列（可横向滚动）
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.fromLTRB(8, 0, 8, 12),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ...activity.tasks.map((task) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 6.0),
+                    child: TaskColumn(
+                      task: task,
+                      onStoryMove: onStoryMove,
+                      onStoryTap: onStoryTap,
+                    ),
+                  );
+                }).toList(),
+                if (activity.tasks.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Text(
+                      '(no tasks)',
+                      style: TextStyle(
+                        fontSize: 12.0,
+                        color: Colors.grey[400],
+                        fontStyle: FontStyle.italic,
                       ),
                     ),
-                ],
-              ),
+                  ),
+              ],
             ),
           ),
         ],

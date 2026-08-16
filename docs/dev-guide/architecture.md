@@ -30,20 +30,20 @@
 
 这一层代表了屏幕上的像素和交互，名字要直观、体现形态。
 
-*   第一层：泳道容器
-    *   组件名：ActivityLane
-    *   含义：用于展示一个 UserActivity 的横向容器。它像一条泳道，里面装着该活动下的所有任务和故事。
-    *   职责：横向布局、背景色区分、标题展示。
+*   第一层：用户活动分组
+    *   组件名：ActivitySection
+    *   含义：用于展示一个 UserActivity 的上级分组，包含该活动下的所有任务列。
+    *   职责：分组标题展示、任务列横向排列。
 
-*   第二层：任务卡片组
-    *   组件名：TaskCard
-    *   含义：用于展示一个 UserTask 的视觉卡片。
+*   第二层：用户任务列
+    *   组件名：TaskColumn
+    *   含义：用于展示一个 UserTask 的最小列。
     *   职责：显示任务标题、作为故事卡片的容器、处理拖拽交互。
 
 *   第三层：故事明细卡
     *   组件名：StoryCard
     *   含义：用于展示一个 UserStory 的最小视觉单元。
-    *   职责：显示故事标题、优先级标签、状态标签。
+    *   职责：显示故事标题、描述、状态圆点。
 
 *   顶层画布
     *   组件名：StoryMapCanvas
@@ -54,8 +54,8 @@
 
 为了让你更直观地理解，我做了一个映射表：
 层级   业务概念 (What)   领域模型类名   UI 组件类名 (How)   备注
-第一层   用户活动 (主干)   UserActivity   ActivityLane   逻辑上叫活动，视觉上叫泳道。
-第二层   用户任务 (骨架)   UserTask   TaskCard   逻辑上叫任务，视觉上叫卡片。
+第一层   用户活动 (主干)   UserActivity   ActivitySection   逻辑上叫活动，视觉上叫分组。
+第二层   用户任务 (骨架)   UserTask   TaskColumn   逻辑上叫任务，视觉上叫列（最小列）。
 第三层   用户故事 (细节)   UserStory   StoryCard   逻辑上叫故事，视觉上叫卡片。
 容器   故事地图   StoryMap   StoryMapCanvas   逻辑上叫地图，视觉上叫画布。
 
@@ -70,21 +70,21 @@
 
 2.  视图层：
     *   StoryMapCanvas 接收 StoryMap 数据。
-    *   StoryMapCanvas 遍历数据，为每个 UserActivity 创建一个 ActivityLane。
-    *   ActivityLane 接收 UserActivity 数据，为每个 UserTask 创建一个 TaskCard。
-    *   TaskCard 接收 UserTask 数据，为每个 UserStory 创建一个 StoryCard。
+    *   StoryMapCanvas 遍历数据，为每个 UserActivity 创建一个 ActivitySection。
+    *   ActivitySection 接收 UserActivity 数据，为每个 UserTask 创建一个 TaskColumn。
+    *   TaskColumn 接收 UserTask 数据，为每个 UserStory 创建一个 StoryCard。
 
 5. 为什么这样命名最好？
 
 1.  职责清晰：
     *   当你看到 UserActivity 时，你知道它是数据，里面可能有复杂的业务逻辑。
-    *   当你看到 ActivityLane 时，你知道它是视图，里面只负责怎么把数据画得好看。
+    *   当你看到 ActivitySection 时，你知道它是视图，里面只负责怎么把数据画得好看。
 
 2.  避免混淆：
-    *   不会把“业务上的活动”和“界面上的卡片”混为一谈。
+    *   不会把“业务上的活动”和“界面上的列/卡片”混为一谈。
 
 3.  易于维护：
-    *   如果未来 UI 改版，比如把 ActivityLane 改成 ActivityColumn，你只需要改组件名，不需要动业务逻辑里的 UserActivity。
+    *   如果未来 UI 改版，比如把 ActivitySection 改成 ActivityGroup，你只需要改组件名，不需要动业务逻辑里的 UserActivity。
 
 4.  符合直觉：
-    *   Lane（泳道）这个词非常形象地表达了“横向流程、纵向堆叠”的视觉特征。
+    *   用户活动是包含任务的上级分组（Section），用户任务是组内的最小列（Column），视觉层级与业务层级一致。

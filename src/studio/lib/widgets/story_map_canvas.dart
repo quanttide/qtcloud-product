@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/story_map_models.dart';
-import 'activity_lane.dart';
+import 'activity_section.dart';
 
 /// 故事地图画布页（独立页面，含 AppBar）
 /// 供独立路由使用；嵌入侧边导航时请直接使用 [StoryMapCanvasView]。
@@ -107,14 +107,17 @@ class _StoryMapCanvasViewState extends State<StoryMapCanvasView> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        // 主要内容：横向滚动的活动泳道
+        // 主要内容：垂直滚动，用户活动分组自上而下排列
+        // （用户活动 → 用户任务列 → 用户故事卡片 三层结构）
         SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
+          scrollDirection: Axis.vertical,
           child: Container(
             color: Colors.grey[50],
-            child: Row(
+            padding: const EdgeInsets.all(12.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: widget.mapData.activities.map((activity) {
-                return ActivityLane(
+                return ActivitySection(
                   activity: activity,
                   onStoryMove: widget.onStoryMove,
                   onStoryTap: widget.onStoryTap,

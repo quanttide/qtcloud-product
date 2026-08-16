@@ -291,7 +291,7 @@ Product _qtcloudProduct() {
                 UserStory(
                   id: 'product-story-1',
                   title: '建立产品全景骨架',
-                  description: '用户活动泳道（UserActivity）',
+                  description: '用户活动分组（UserActivity）',
                   taskId: 'product-task-map',
                   phase: ReleasePhase.mvp,
                   status: StoryStatus.done,

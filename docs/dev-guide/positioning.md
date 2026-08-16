@@ -45,7 +45,7 @@
 ### 不变的原则
 
 - **隐性 → 显式**：产品结构以共享视图存在，而非个人头脑。
-- **领域模型与 UI 组件分离**：数据层（UserActivity / UserTask / UserStory）与视图层（ActivityLane / TaskCard / StoryCard）命名与职责分离。
+- **领域模型与 UI 组件分离**：数据层（UserActivity / UserTask / UserStory）与视图层（ActivitySection / TaskColumn / StoryCard）命名与职责分离。
 - **对照**：对照是认知工具——好与坏对照、产品与产品对照。跨产品对照是组合层新增的对照维度。
 
 ## 当前阶段
