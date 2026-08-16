@@ -67,6 +67,17 @@ class _StoryMapCanvasViewState extends State<StoryMapCanvasView> {
   /// 已折叠的 Release 行
   final Set<String> _collapsedReleases = {};
 
+  /// 垂直 / 水平滚动控制器（配合常显滚动条）
+  final ScrollController _verticalController = ScrollController();
+  final ScrollController _horizontalController = ScrollController();
+
+  @override
+  void dispose() {
+    _verticalController.dispose();
+    _horizontalController.dispose();
+    super.dispose();
+  }
+
   @override
   void didUpdateWidget(StoryMapCanvasView oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -90,34 +101,47 @@ class _StoryMapCanvasViewState extends State<StoryMapCanvasView> {
 
     return Container(
       color: Colors.grey[50],
-      child: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
+      // 双层滚动各自带常显滚动条（thumbVisibility），提示可滚动区域
+      child: Scrollbar(
+        controller: _verticalController,
+        thumbVisibility: true,
         child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // 1. 活动层（橙色，跨列合并）
-                _ActivityLayerRow(columns: columns),
-                const SizedBox(height: _columnGap),
-                // 2. 任务层（紫色）
-                _TaskLayerRow(columns: columns),
-                const SizedBox(height: 12.0),
-                // 3. Release 行 × N（蓝色故事卡片行，可折叠）
-                for (final release in releases) ...[
-                  _ReleaseRow(
-                    release: release,
-                    columns: columns,
-                    collapsed: _collapsedReleases.contains(release),
-                    onToggle: () => _toggleRelease(release),
-                    onStoryMove: widget.onStoryMove,
-                    onStoryTap: widget.onStoryTap,
-                  ),
-                  const SizedBox(height: 8.0),
-                ],
-              ],
+          controller: _verticalController,
+          scrollDirection: Axis.vertical,
+          child: Scrollbar(
+            controller: _horizontalController,
+            thumbVisibility: true,
+            // 内层滚动通知 depth=1：水平滚动条只响应内层滚动
+            notificationPredicate: (notification) => notification.depth == 1,
+            child: SingleChildScrollView(
+              controller: _horizontalController,
+              scrollDirection: Axis.horizontal,
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 1. 活动层（橙色，跨列合并）
+                    _ActivityLayerRow(columns: columns),
+                    const SizedBox(height: _columnGap),
+                    // 2. 任务层（紫色）
+                    _TaskLayerRow(columns: columns),
+                    const SizedBox(height: 12.0),
+                    // 3. Release 行 × N（蓝色故事卡片行，可折叠）
+                    for (final release in releases) ...[
+                      _ReleaseRow(
+                        release: release,
+                        columns: columns,
+                        collapsed: _collapsedReleases.contains(release),
+                        onToggle: () => _toggleRelease(release),
+                        onStoryMove: widget.onStoryMove,
+                        onStoryTap: widget.onStoryTap,
+                      ),
+                      const SizedBox(height: 8.0),
+                    ],
+                  ],
+                ),
+              ),
             ),
           ),
         ),

@@ -43,9 +43,9 @@ void main() {
     expect(find.byKey(const Key('nav-specification')), findsOneWidget);
 
     // 需求看板：活动层（跨列合并）与任务层
-    expect(find.text('📋 计划与状态'), findsOneWidget);
-    expect(find.text('🚀 正式发布'), findsOneWidget);
-    expect(find.text('了解当前状态'), findsOneWidget);
+    expect(find.text('阶段/生命周期管理'), findsOneWidget);
+    expect(find.text('管理平台'), findsOneWidget);
+    expect(find.text('plan 计划'), findsOneWidget);
 
     // Release 行（MVP 版本 / 未来迭代）
     expect(find.byKey(const Key('release-toggle-MVP 版本')), findsOneWidget);
@@ -82,11 +82,11 @@ void main() {
     await tester.tap(find.byKey(const Key('nav-specification')));
     await tester.pumpAndSettle();
     expect(find.text('规格（事件风暴）'), findsOneWidget);
-    expect(find.text('📋 计划与状态'), findsNothing);
+    expect(find.text('阶段/生命周期管理'), findsNothing);
 
     await tester.tap(find.byKey(const Key('nav-requirements')));
     await tester.pumpAndSettle();
-    expect(find.text('📋 计划与状态'), findsOneWidget);
+    expect(find.text('阶段/生命周期管理'), findsOneWidget);
   });
 
   testWidgets('Release 行可折叠与展开', (WidgetTester tester) async {
