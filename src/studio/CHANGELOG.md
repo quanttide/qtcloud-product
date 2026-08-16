@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.0-alpha.2] - 2026-08-16
+
+### 代码
+
+- 需求看板（二维矩阵）双层滚动条常显（垂直浏览 Release 行、水平浏览任务列），不再隐藏滚动指示。
+- 种子数据更新为 stage/lifecycle 形态（qtcloud-devops：生命周期八阶段 + 平台治理），新增故事文档 `docs/stories/`；新增 `src/cli/`（qtcloud-product-cli，Rust）。
+
 ## [0.1.0-alpha.1] - 2026-08-16
 
 ### 代码
