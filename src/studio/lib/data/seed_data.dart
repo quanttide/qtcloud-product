@@ -12,8 +12,8 @@ import '../models/story_map_models.dart';
 /// 叙事约定：故事卡片标题使用动词开头的用户语言（"做什么"），
 /// 具体命令与技术细节放入 description 第二层。
 
-/// 产品组合：第一批实验对象
-final List<Product> seedPortfolio = [
+/// 种子数据：第一批实验产品（qtcloud-devops / qtcloud-product / qtcloud-code）
+final List<Product> seedProducts = [
   _qtcloudDevops(),
   _qtcloudProduct(),
   _qtcloudCode(),

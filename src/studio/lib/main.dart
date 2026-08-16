@@ -24,9 +24,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-/// 产品云主界面：左侧导航栏 + 内容区
-///
-/// 内容区两种形态：产品组合（卡片网格）或所选产品的故事地图画布。
+/// 产品云主界面：左侧导航栏 + 所选产品的故事地图画布
 class ProductCloudPage extends StatefulWidget {
   const ProductCloudPage({super.key});
 
@@ -35,15 +33,16 @@ class ProductCloudPage extends StatefulWidget {
 }
 
 class _ProductCloudPageState extends State<ProductCloudPage> {
-  /// 当前选中的产品；null 表示显示产品组合
-  Product? _selectedProduct;
+  late Product _selectedProduct;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedProduct = seedProducts.first;
+  }
 
   void _openProduct(Product product) {
     setState(() => _selectedProduct = product);
-  }
-
-  void _showPortfolio() {
-    setState(() => _selectedProduct = null);
   }
 
   void _debugStoryMove(UserStory story, String newTaskId) {
@@ -69,18 +68,14 @@ class _ProductCloudPageState extends State<ProductCloudPage> {
           _SideNav(
             selectedProduct: _selectedProduct,
             onSelectProduct: _openProduct,
-            onSelectPortfolio: _showPortfolio,
           ),
           Expanded(
-            child: _selectedProduct == null
-                ? _PortfolioView(onOpenProduct: _openProduct)
-                : _ProductCanvasView(
-                    product: _selectedProduct!,
-                    onBack: _showPortfolio,
-                    onStoryMove: _debugStoryMove,
-                    onStoryTap: _debugStoryTap,
-                    onMVPLineMove: _debugMVPLineMove,
-                  ),
+            child: _ProductCanvasView(
+              product: _selectedProduct,
+              onStoryMove: _debugStoryMove,
+              onStoryTap: _debugStoryTap,
+              onMVPLineMove: _debugMVPLineMove,
+            ),
           ),
         ],
       ),
@@ -91,14 +86,12 @@ class _ProductCloudPageState extends State<ProductCloudPage> {
 // ============ 左侧导航栏 ============
 
 class _SideNav extends StatelessWidget {
-  final Product? selectedProduct;
+  final Product selectedProduct;
   final ValueChanged<Product> onSelectProduct;
-  final VoidCallback onSelectPortfolio;
 
   const _SideNav({
     required this.selectedProduct,
     required this.onSelectProduct,
-    required this.onSelectPortfolio,
   });
 
   IconData _iconFor(String id) {
@@ -142,17 +135,9 @@ class _SideNav extends StatelessWidget {
               ],
             ),
           ),
-          // 导航项：产品组合
-          _NavItem(
-            key: const Key('nav-portfolio'),
-            icon: Icons.dashboard_outlined,
-            label: '产品组合',
-            selected: selectedProduct == null,
-            onTap: onSelectPortfolio,
-          ),
           // 分组标题：产品
           const Padding(
-            padding: EdgeInsets.fromLTRB(16, 16, 16, 6),
+            padding: EdgeInsets.fromLTRB(16, 8, 16, 6),
             child: Text(
               '产品',
               style: TextStyle(
@@ -163,12 +148,12 @@ class _SideNav extends StatelessWidget {
             ),
           ),
           // 导航项：三个实验产品
-          for (final product in seedPortfolio)
+          for (final product in seedProducts)
             _NavItem(
               key: Key('nav-${product.id}'),
               icon: _iconFor(product.id),
               label: product.name,
-              selected: selectedProduct?.id == product.id,
+              selected: selectedProduct.id == product.id,
               onTap: () => onSelectProduct(product),
             ),
           const Spacer(),
@@ -238,179 +223,16 @@ class _NavItem extends StatelessWidget {
   }
 }
 
-// ============ 产品组合视图（卡片网格） ============
-
-class _PortfolioView extends StatelessWidget {
-  final ValueChanged<Product> onOpenProduct;
-
-  const _PortfolioView({required this.onOpenProduct});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.fromLTRB(24, 20, 24, 4),
-          child: Text(
-            '产品组合',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w800,
-              color: Color(0xFF37474F),
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(24, 0, 24, 12),
-          child: Text(
-            '第一批实验对象：集中管理和可视化所有产品，支撑产品决策',
-            style: TextStyle(fontSize: 13, color: Colors.grey[600]),
-          ),
-        ),
-        Expanded(
-          child: GridView.builder(
-            padding: const EdgeInsets.fromLTRB(24, 4, 24, 24),
-            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 380,
-              mainAxisSpacing: 16,
-              crossAxisSpacing: 16,
-              childAspectRatio: 1.15,
-            ),
-            itemCount: seedPortfolio.length,
-            itemBuilder: (context, index) {
-              final product = seedPortfolio[index];
-              return _ProductCard(
-                key: Key('product-card-${product.id}'),
-                product: product,
-                onTap: () => onOpenProduct(product),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-/// 产品卡片：名称、定位、设计思路与故事规模概览
-class _ProductCard extends StatelessWidget {
-  final Product product;
-  final VoidCallback onTap;
-
-  const _ProductCard({
-    super.key,
-    required this.product,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 1.5,
-      clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // 名称 + MVP 占比徽章
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      product.name,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 3,
-                    ),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFFEBEE),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      '${product.mvpStories}/${product.totalStories} MVP',
-                      style: const TextStyle(
-                        color: Color(0xFFC62828),
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Text(
-                product.tagline,
-                style: TextStyle(
-                  fontSize: 12.5,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.grey[800],
-                ),
-              ),
-              const SizedBox(height: 8),
-              Expanded(
-                child: Text(
-                  '设计思路：${product.designIdea}',
-                  maxLines: 4,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 11.5,
-                    height: 1.5,
-                    color: Colors.grey[700],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 6),
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      '${product.storyMap.activities.length} 个活动 · '
-                      '${product.totalStories} 个故事',
-                      style: TextStyle(fontSize: 11, color: Colors.grey[600]),
-                    ),
-                  ),
-                  Text(
-                    '查看地图 →',
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.blueGrey[600],
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 // ============ 产品故事地图视图（嵌入内容区） ============
 
 class _ProductCanvasView extends StatelessWidget {
   final Product product;
-  final VoidCallback onBack;
   final Function(UserStory, String)? onStoryMove;
   final Function(UserStory)? onStoryTap;
   final Function(double)? onMVPLineMove;
 
   const _ProductCanvasView({
     required this.product,
-    required this.onBack,
     this.onStoryMove,
     this.onStoryTap,
     this.onMVPLineMove,
@@ -421,26 +243,12 @@ class _ProductCanvasView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // 内容区头部：返回 + 标题
+        // 内容区头部：标题
         Container(
           color: const Color(0xFF2C3E50),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           child: Row(
             children: [
-              TextButton.icon(
-                key: const Key('back-to-portfolio'),
-                onPressed: onBack,
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.white70,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                ),
-                icon: const Icon(Icons.arrow_back, size: 16),
-                label: const Text('产品组合', style: TextStyle(fontSize: 12)),
-              ),
-              const SizedBox(width: 4),
               Expanded(
                 child: Text(
                   '量潮产品云 · ${product.name}',
@@ -451,6 +259,15 @@ class _ProductCanvasView extends StatelessWidget {
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
                   ),
+                ),
+              ),
+              Text(
+                product.tagline,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: Colors.white54,
+                  fontSize: 11,
                 ),
               ),
             ],
