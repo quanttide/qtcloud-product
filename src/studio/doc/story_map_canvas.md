@@ -331,8 +331,8 @@ flutter run -d android
 ## 十、参考文档
 
 - 📋 架构设计指南：[StoryMapCanvas_Implementation_Guide.md](../StoryMapCanvas_Implementation_Guide.md)
-- 📐 ADD 文档：[docs/add/README.md](../docs/add/README.md)
-- 🎨 IXD 文档：[docs/ixd/components/story_map_canvas.md](../docs/ixd/components/story_map_canvas.md)
+- 📐 架构设计：[docs/dev-guide/architecture.md](../docs/dev-guide/architecture.md)
+- 🎨 交互设计：[docs/dev-guide/design/components/story_map_canvas.md](../docs/dev-guide/design/components/story_map_canvas.md)
 - 📚 Flutter 官方文档：https://flutter.dev
 
 ---

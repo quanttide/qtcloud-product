@@ -7,22 +7,19 @@ project:
   authors: []
   toc:
     - file: index.md
-    - title: PRD（产品需求文档）
+    - title: 开发指南（Dev Guide）
       children:
-        - file: prd/README.md
-        - file: prd/stories/stories/README.md
-        - file: prd/stories/stories/user_story_mapping/README.md
-        - file: prd/stories/stories/user_story/README.md
-        - file: prd/stories/stories/user_story/edit_user_story.md
-        - file: prd/stories/stories/user_story/show_user_story.md
-        - file: prd/stories/prototypes/README.md
-        - file: prd/stories/roadmaps/README.md
-    - title: ADD（架构设计文档）
-      children:
-        - file: add/README.md
-    - title: IXD（交互设计文档）
-      children:
-        - file: ixd/README.md
-        - file: ixd/components/story_map_canvas.md
+        - file: dev-guide/README.md
+        - file: dev-guide/architecture.md
+        - file: dev-guide/design/README.md
+        - file: dev-guide/design/components/story_map_canvas.md
+        - file: dev-guide/prd/README.md
+        - file: dev-guide/prd/stories/stories/README.md
+        - file: dev-guide/prd/stories/stories/user_story_mapping/README.md
+        - file: dev-guide/prd/stories/stories/user_story/README.md
+        - file: dev-guide/prd/stories/stories/user_story/edit_user_story.md
+        - file: dev-guide/prd/stories/stories/user_story/show_user_story.md
+        - file: dev-guide/prd/stories/prototypes/README.md
+        - file: dev-guide/prd/stories/roadmaps/README.md
 site:
   template: book-theme
