@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:studio/data/seed_data.dart';
 import 'package:studio/main.dart';
+import 'package:studio/widgets/story_map_canvas.dart';
 
 void main() {
   test('种子数据包含三个实验产品且各有故事地图', () {
@@ -85,5 +86,37 @@ void main() {
     expect(find.text('💻 开发编码'), findsOneWidget);
     expect(find.text('✅ 测试与验证'), findsOneWidget);
     expect(find.text('🚀 正式发布'), findsOneWidget);
+  });
+
+  testWidgets('发布线拖拽精确跟随指针（多事件同帧不抖动）', (WidgetTester tester) async {
+    final positions = <double>[];
+    final product = seedPortfolio[1]; // qtcloud-product，初始 0.4
+    await tester.pumpWidget(
+      MaterialApp(
+        home: StoryMapCanvasPage(
+          mapData: product.storyMap,
+          onMVPLineMove: positions.add,
+        ),
+      ),
+    );
+
+    final canvasHeight = tester.getSize(find.byType(StoryMapCanvasView)).height;
+
+    // 模拟快速拖拽：连续 8 次 move 事件、中间不 pump 帧
+    final gesture = await tester.startGesture(
+      tester.getCenter(find.byKey(const Key('mvp-line-drag'))),
+    );
+    for (var i = 0; i < 8; i++) {
+      await gesture.moveBy(const Offset(0, 10));
+    }
+    await gesture.up();
+    await tester.pump();
+
+    expect(positions, isNotEmpty);
+    // 线应精确移动 80px / 画布高度，而不是只跟了最后一段增量
+    expect(
+      positions.last,
+      closeTo(0.4 + 80 / canvasHeight, 0.01),
+    );
   });
 }

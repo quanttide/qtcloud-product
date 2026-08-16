@@ -58,6 +58,11 @@ class StoryMapCanvasView extends StatefulWidget {
 class _StoryMapCanvasViewState extends State<StoryMapCanvasView> {
   late double mvpLinePosition;
 
+  /// 拖拽起点（全局 Y 坐标）与起点发布线位置。
+  /// 使用绝对坐标跟踪，避免帧率不足时增量累加导致的抖动/乱画。
+  double? _dragStartGlobalY;
+  double? _dragStartPosition;
+
   @override
   void initState() {
     super.initState();
@@ -72,11 +77,30 @@ class _StoryMapCanvasViewState extends State<StoryMapCanvasView> {
     }
   }
 
-  void _handleMVPLineDrag(double dy, double maxHeight) {
+  void _handleDragStart(DragStartDetails details) {
+    _dragStartGlobalY = details.globalPosition.dy;
+    _dragStartPosition = mvpLinePosition;
+  }
+
+  void _handleDragUpdate(DragUpdateDetails details, double maxHeight) {
+    final startY = _dragStartGlobalY;
+    final startPosition = _dragStartPosition;
+    if (startY == null || startPosition == null) return;
+    final delta = details.globalPosition.dy - startY;
     setState(() {
-      mvpLinePosition = (dy / maxHeight).clamp(0.0, 1.0);
+      mvpLinePosition = (startPosition + delta / maxHeight).clamp(0.0, 1.0);
       widget.onMVPLineMove?.call(mvpLinePosition);
     });
+  }
+
+  void _handleDragEnd(DragEndDetails details) {
+    _dragStartGlobalY = null;
+    _dragStartPosition = null;
+  }
+
+  void _handleDragCancel() {
+    _dragStartGlobalY = null;
+    _dragStartPosition = null;
   }
 
   @override
@@ -142,19 +166,21 @@ class _StoryMapCanvasViewState extends State<StoryMapCanvasView> {
                         painter: const _DashedLinePainter(Color(0xFF90A4AE)),
                       ),
                     ),
-                    // 拖动交互区域
+                    // 拖动交互区域（绝对位置跟踪，避免乱画）
                     Positioned(
-                      top: mvpTop - 10,
+                      top: (mvpTop - 10).clamp(0.0, constraints.maxHeight - 20),
                       left: 0,
                       right: 0,
                       height: 20.0,
                       child: GestureDetector(
+                        key: const Key('mvp-line-drag'),
+                        behavior: HitTestBehavior.opaque,
+                        onVerticalDragStart: _handleDragStart,
                         onVerticalDragUpdate: (DragUpdateDetails details) {
-                          _handleMVPLineDrag(
-                            mvpTop + details.delta.dy,
-                            constraints.maxHeight,
-                          );
+                          _handleDragUpdate(details, constraints.maxHeight);
                         },
+                        onVerticalDragEnd: _handleDragEnd,
+                        onVerticalDragCancel: _handleDragCancel,
                         child: MouseRegion(
                           cursor: SystemMouseCursors.resizeRow,
                           child: Container(
@@ -202,6 +228,8 @@ class _DashedLinePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    // 防御：无界宽度下不绘制（避免异常布局时无限循环画点）
+    if (size.width <= 0 || size.width.isInfinite) return;
     final paint = Paint()
       ..color = color
       ..strokeWidth = 1.5;
