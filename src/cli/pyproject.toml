@@ -1,0 +1,17 @@
+[build-system]
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"
+
+[tool.maturin]
+module-name = "qtcloud_product_cli._native"
+source-dir = "."
+python-source = "packages/python"
+manylinux = "2_28"
+features = ["python"]
+
+[project]
+name = "qtcloud-product-cli"
+version = "0.1.0"
+description = "产品云 CLI — 以用户故事为中心梳理需求"
+requires-python = ">=3.12"
+dependencies = []
