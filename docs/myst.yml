@@ -10,6 +10,7 @@ project:
     - title: 开发指南（Dev Guide）
       children:
         - file: dev-guide/README.md
+        - file: dev-guide/ideas.md
         - file: dev-guide/architecture.md
         - file: dev-guide/design/README.md
         - file: dev-guide/design/components/story_map_canvas.md
