@@ -82,43 +82,34 @@ class _StoryMapCanvasPageState extends State<StoryMapCanvasPage> {
                   cursor: SystemMouseCursors.resizeRow,
                   child: Stack(
                     children: [
-                      // MVP 标签
+                      // MVP 标签（弱化）
                       Positioned(
                         top: 16,
                         right: 16,
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFE74C3C),
-                            borderRadius: BorderRadius.circular(4),
+                            color: const Color(0xFFFFEBEE),
+                            borderRadius: BorderRadius.circular(10),
                           ),
                           child: const Text(
                             'MVP',
                             style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 12,
+                              color: Color(0xFFC62828),
+                              fontWeight: FontWeight.w600,
+                              fontSize: 10,
                             ),
                           ),
                         ),
                       ),
-                      // Release Line（发布线）
+                      // Release Line（发布线）：细浅色虚线
                       Positioned(
                         top: mvpTop,
                         left: 0,
                         right: 0,
-                        child: Container(
-                          height: 3.0,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFFE74C3C),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Color(0xFFE74C3C),
-                                blurRadius: 6.0,
-                                spreadRadius: 1.0,
-                              ),
-                            ],
-                          ),
+                        child: CustomPaint(
+                          size: const Size(double.infinity, 1.5),
+                          painter: const _DashedLinePainter(Color(0xFF90A4AE)),
                         ),
                       ),
                       // 拖动交互区域
@@ -142,22 +133,22 @@ class _StoryMapCanvasPageState extends State<StoryMapCanvasPage> {
                           ),
                         ),
                       ),
-                      // Future 标签
+                      // Future 标签（弱化）
                       Positioned(
                         bottom: 16,
                         right: 16,
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF95A5A6),
-                            borderRadius: BorderRadius.circular(4),
+                            color: const Color(0xFFECEFF1),
+                            borderRadius: BorderRadius.circular(10),
                           ),
                           child: const Text(
                             'Future',
                             style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 12,
+                              color: Color(0xFF607D8B),
+                              fontWeight: FontWeight.w600,
+                              fontSize: 10,
                             ),
                           ),
                         ),
@@ -172,4 +163,29 @@ class _StoryMapCanvasPageState extends State<StoryMapCanvasPage> {
       ),
     );
   }
+}
+
+/// 细浅色虚线画笔：用于 Release Line（发布线）
+class _DashedLinePainter extends CustomPainter {
+  final Color color;
+
+  const _DashedLinePainter(this.color);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = 1.5;
+    const dashWidth = 6.0;
+    const dashSpace = 4.0;
+    double x = 0;
+    while (x < size.width) {
+      canvas.drawLine(Offset(x, 0), Offset(x + dashWidth, 0), paint);
+      x += dashWidth + dashSpace;
+    }
+  }
+
+  @override
+  bool shouldRepaint(_DashedLinePainter oldDelegate) =>
+      oldDelegate.color != color;
 }

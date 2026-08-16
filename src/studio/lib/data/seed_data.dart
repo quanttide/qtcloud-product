@@ -4,10 +4,13 @@ import '../models/story_map_models.dart';
 /// 种子数据：第一批实验产品的用户故事地图
 ///
 /// 每个产品的故事地图呈现其设计思路：
-/// - qtcloud-devops：严格按照 DevOps 八步流程设计（了解当前状态 → 同步子模块
-///   → 开发 → 预发布验证 → CI 验证 → 正式发布 → 验证发布 → 维护）
+/// - qtcloud-devops：严格按照 DevOps 八步流程设计，在故事地图上聚合为四个阶段
+///   （📋 计划与状态 → 💻 开发编码 → ✅ 测试与验证 → 🚀 正式发布）
 /// - qtcloud-product：以故事地图显式化产品结构，用组合视图支撑多产品决策
 /// - qtcloud-code：3R 人机协作（Review → Reflect → Refactor），规则引擎把关、人做决策
+///
+/// 叙事约定：故事卡片标题使用动词开头的用户语言（"做什么"），
+/// 具体命令与技术细节放入 description 第二层。
 
 /// 产品组合：第一批实验对象
 final List<Product> seedPortfolio = [
@@ -17,43 +20,62 @@ final List<Product> seedPortfolio = [
 ];
 
 // ============ qtcloud-devops：量潮 DevOps 云 ============
-// 设计思路：严格按照 DevOps 八步流程设计，每个阶段以可执行命令落地
-// （code status / sync / retire，release stage / publish / retire / status）
+// 设计思路：严格按照 DevOps 八步流程设计（了解当前状态 → 同步子模块 → 开发 →
+// 预发布验证 → CI 验证 → 正式发布 → 验证发布 → 维护），
+// 在故事地图上聚合为四个阶段，每个阶段以可执行命令落地，约束结果而非行为。
 
 Product _qtcloudDevops() {
   return const Product(
     id: 'qtcloud-devops',
     name: 'qtcloud-devops',
     tagline: '把发布规范封装成 CLI，八步流程驱动价值流动',
-    designIdea: '严格按照 DevOps 八步流程设计：了解当前状态 → 同步子模块 → 开发 → 预发布验证 → CI 验证 → 正式发布 → 验证发布 → 维护。每个阶段以可执行命令落地（code status / sync / retire，release stage / publish / status / retire），约束结果而非行为。',
+    designIdea: '严格按照 DevOps 八步流程设计，在故事地图上聚合为四个阶段：计划与状态 → 开发编码 → 测试与验证 → 正式发布。每个阶段以可执行命令落地（code status / sync，release stage / publish / retire），约束结果而非行为。',
     storyMap: StoryMap(
       id: 'map-devops',
       name: 'qtcloud-devops',
-      mvpLinePosition: 0.6,
+      mvpLinePosition: 0.55,
       activities: [
-        // Step 1：了解当前状态
+        // 阶段一：计划与状态（八步流程 Step 1-2）
         UserActivity(
-          id: 'devops-step-1',
-          title: '了解当前状态',
+          id: 'devops-phase-1',
+          title: '📋 计划与状态',
           order: 0,
           tasks: [
             UserTask(
-              id: 'devops-task-docs',
-              title: '查看规划文档',
-              activityId: 'devops-step-1',
+              id: 'devops-task-status',
+              title: '了解当前状态',
+              activityId: 'devops-phase-1',
               order: 0,
               stories: [
                 UserStory(
                   id: 'devops-story-1',
-                  title: '查看 ROADMAP / BUGS / TODO 了解迭代计划与待办',
-                  taskId: 'devops-task-docs',
+                  title: '查看迭代计划与待办',
+                  description: 'ROADMAP / BUGS / TODO',
+                  taskId: 'devops-task-status',
                   phase: ReleasePhase.mvp,
                   status: StoryStatus.done,
                 ),
                 UserStory(
                   id: 'devops-story-2',
-                  title: '查看子模块状态（code status）',
-                  taskId: 'devops-task-docs',
+                  title: '了解子模块状态',
+                  description: 'qtcloud-devops code status',
+                  taskId: 'devops-task-status',
+                  phase: ReleasePhase.mvp,
+                  status: StoryStatus.done,
+                ),
+              ],
+            ),
+            UserTask(
+              id: 'devops-task-sync',
+              title: '同步子模块',
+              activityId: 'devops-phase-1',
+              order: 1,
+              stories: [
+                UserStory(
+                  id: 'devops-story-3',
+                  title: '同步代码仓库',
+                  description: 'code sync：推送 → 更新父指针 → 推送父仓库',
+                  taskId: 'devops-task-sync',
                   phase: ReleasePhase.mvp,
                   status: StoryStatus.done,
                 ),
@@ -61,20 +83,22 @@ Product _qtcloudDevops() {
             ),
             UserTask(
               id: 'devops-task-audit',
-              title: '审计代码质量',
-              activityId: 'devops-step-1',
-              order: 1,
+              title: '审查代码质量',
+              activityId: 'devops-phase-1',
+              order: 2,
               stories: [
                 UserStory(
-                  id: 'devops-story-3',
-                  title: '执行 code audit --json 了解代码质量状态',
+                  id: 'devops-story-4',
+                  title: '进行代码质量审查',
+                  description: 'code audit --json',
                   taskId: 'devops-task-audit',
                   phase: ReleasePhase.mvp,
                   status: StoryStatus.inProgress,
                 ),
                 UserStory(
-                  id: 'devops-story-4',
-                  title: '从审计自动生成 TODO 与 ROADMAP（todo/roadmap-from-audit）',
+                  id: 'devops-story-5',
+                  title: '从审计自动生成规划',
+                  description: 'todo / roadmap-from-audit 流水线',
                   taskId: 'devops-task-audit',
                   phase: ReleasePhase.future,
                   status: StoryStatus.todo,
@@ -83,67 +107,23 @@ Product _qtcloudDevops() {
             ),
           ],
         ),
-        // Step 2：同步子模块
+        // 阶段二：开发编码（八步流程 Step 3）
         UserActivity(
-          id: 'devops-step-2',
-          title: '同步子模块',
+          id: 'devops-phase-2',
+          title: '💻 开发编码',
           order: 1,
           tasks: [
             UserTask(
-              id: 'devops-task-sync',
-              title: '同步子模块指针',
-              activityId: 'devops-step-2',
-              order: 0,
-              stories: [
-                UserStory(
-                  id: 'devops-story-5',
-                  title: 'code sync：推送 → 更新父指针 → 推送父仓库',
-                  taskId: 'devops-task-sync',
-                  phase: ReleasePhase.mvp,
-                  status: StoryStatus.done,
-                ),
-              ],
-            ),
-          ],
-        ),
-        // Step 3：开发
-        UserActivity(
-          id: 'devops-step-3',
-          title: '开发',
-          order: 2,
-          tasks: [
-            UserTask(
-              id: 'devops-task-code',
-              title: '编写代码',
-              activityId: 'devops-step-3',
+              id: 'devops-task-develop',
+              title: '编写并测试代码',
+              activityId: 'devops-phase-2',
               order: 0,
               stories: [
                 UserStory(
                   id: 'devops-story-6',
-                  title: '在子模块内修改代码',
-                  taskId: 'devops-task-code',
-                  phase: ReleasePhase.mvp,
-                  status: StoryStatus.done,
-                ),
-              ],
-            ),
-            UserTask(
-              id: 'devops-task-test',
-              title: '运行测试',
-              activityId: 'devops-step-3',
-              order: 1,
-              stories: [
-                UserStory(
-                  id: 'devops-story-7',
-                  title: 'cargo test 运行所有测试',
-                  taskId: 'devops-task-test',
-                  phase: ReleasePhase.mvp,
-                  status: StoryStatus.done,
-                ),
-                UserStory(
-                  id: 'devops-story-8',
-                  title: '运行 CLI / code / release 集成测试',
-                  taskId: 'devops-task-test',
+                  title: '修改代码并保证测试通过',
+                  description: 'cargo test（含 cli / code / release 集成测试）',
+                  taskId: 'devops-task-develop',
                   phase: ReleasePhase.mvp,
                   status: StoryStatus.done,
                 ),
@@ -151,21 +131,30 @@ Product _qtcloudDevops() {
             ),
           ],
         ),
-        // Step 4：预发布验证
+        // 阶段三：测试与验证（八步流程 Step 4-5）
         UserActivity(
-          id: 'devops-step-4',
-          title: '预发布验证',
-          order: 3,
+          id: 'devops-phase-3',
+          title: '✅ 测试与验证',
+          order: 2,
           tasks: [
             UserTask(
               id: 'devops-task-preflight',
-              title: '版本一致性检查',
-              activityId: 'devops-step-4',
+              title: '预发布验证',
+              activityId: 'devops-phase-3',
               order: 0,
               stories: [
                 UserStory(
-                  id: 'devops-story-9',
-                  title: '运行 preflight.sh 版本一致性检查',
+                  id: 'devops-story-7',
+                  title: '检查版本一致性',
+                  description: 'preflight.sh',
+                  taskId: 'devops-task-preflight',
+                  phase: ReleasePhase.mvp,
+                  status: StoryStatus.inProgress,
+                ),
+                UserStory(
+                  id: 'devops-story-8',
+                  title: '标记预发布版本',
+                  description: 'release stage -v cli/v0.4.1-rc.1 触发 CI',
                   taskId: 'devops-task-preflight',
                   phase: ReleasePhase.mvp,
                   status: StoryStatus.inProgress,
@@ -173,15 +162,24 @@ Product _qtcloudDevops() {
               ],
             ),
             UserTask(
-              id: 'devops-task-stage',
-              title: '标记预发布版本',
-              activityId: 'devops-step-4',
+              id: 'devops-task-ci',
+              title: 'CI 验证',
+              activityId: 'devops-phase-3',
               order: 1,
               stories: [
                 UserStory(
+                  id: 'devops-story-9',
+                  title: '等待构建与测试通过',
+                  description: 'CI 完成后进入下一步',
+                  taskId: 'devops-task-ci',
+                  phase: ReleasePhase.mvp,
+                  status: StoryStatus.inProgress,
+                ),
+                UserStory(
                   id: 'devops-story-10',
-                  title: 'release stage -v cli/v0.4.1-rc.1 触发 CI',
-                  taskId: 'devops-task-stage',
+                  title: '随时查看发布状态',
+                  description: 'release status',
+                  taskId: 'devops-task-ci',
                   phase: ReleasePhase.mvp,
                   status: StoryStatus.inProgress,
                 ),
@@ -189,118 +187,70 @@ Product _qtcloudDevops() {
             ),
           ],
         ),
-        // Step 5：CI 验证
+        // 阶段四：正式发布（八步流程 Step 6-8）
         UserActivity(
-          id: 'devops-step-5',
-          title: 'CI 验证',
-          order: 4,
+          id: 'devops-phase-4',
+          title: '🚀 正式发布',
+          order: 3,
           tasks: [
             UserTask(
-              id: 'devops-task-ci',
-              title: '等待 CI 完成',
-              activityId: 'devops-step-5',
+              id: 'devops-task-publish',
+              title: '正式发布',
+              activityId: 'devops-phase-4',
               order: 0,
               stories: [
                 UserStory(
                   id: 'devops-story-11',
-                  title: '等待 CI 完成构建和测试，确认无失败',
-                  taskId: 'devops-task-ci',
+                  title: '发布软件版本',
+                  description: 'release publish -v cli/v0.4.1 -y',
+                  taskId: 'devops-task-publish',
                   phase: ReleasePhase.mvp,
                   status: StoryStatus.inProgress,
                 ),
                 UserStory(
                   id: 'devops-story-12',
-                  title: '随时查看发布状态（release status）',
-                  taskId: 'devops-task-ci',
+                  title: '自动分发到注册源',
+                  description: 'CI 推送 crates.io 与 PyPI',
+                  taskId: 'devops-task-publish',
                   phase: ReleasePhase.mvp,
-                  status: StoryStatus.inProgress,
+                  status: StoryStatus.todo,
                 ),
               ],
             ),
-          ],
-        ),
-        // Step 6：正式发布
-        UserActivity(
-          id: 'devops-step-6',
-          title: '正式发布',
-          order: 5,
-          tasks: [
             UserTask(
-              id: 'devops-task-publish',
-              title: '执行发布',
-              activityId: 'devops-step-6',
-              order: 0,
+              id: 'devops-task-verify',
+              title: '验证发布',
+              activityId: 'devops-phase-4',
+              order: 1,
               stories: [
                 UserStory(
                   id: 'devops-story-13',
-                  title: 'release publish -v cli/v0.4.1 -y 正式发布',
-                  taskId: 'devops-task-publish',
-                  phase: ReleasePhase.mvp,
-                  status: StoryStatus.inProgress,
-                ),
-                UserStory(
-                  id: 'devops-story-14',
-                  title: 'CI 自动推送 crates.io 与 PyPI',
-                  taskId: 'devops-task-publish',
-                  phase: ReleasePhase.mvp,
-                  status: StoryStatus.todo,
-                ),
-              ],
-            ),
-          ],
-        ),
-        // Step 7：验证发布
-        UserActivity(
-          id: 'devops-step-7',
-          title: '验证发布',
-          order: 6,
-          tasks: [
-            UserTask(
-              id: 'devops-task-verify',
-              title: '确认发布状态',
-              activityId: 'devops-step-7',
-              order: 0,
-              stories: [
-                UserStory(
-                  id: 'devops-story-15',
-                  title: 'release status 确认发布状态',
-                  taskId: 'devops-task-verify',
-                  phase: ReleasePhase.mvp,
-                  status: StoryStatus.todo,
-                ),
-                UserStory(
-                  id: 'devops-story-16',
-                  title: 'cargo search / pip install 确认注册源',
+                  title: '确认发布成功',
+                  description: 'release status；cargo search / pip install 验证',
                   taskId: 'devops-task-verify',
                   phase: ReleasePhase.mvp,
                   status: StoryStatus.todo,
                 ),
               ],
             ),
-          ],
-        ),
-        // Step 8：维护
-        UserActivity(
-          id: 'devops-step-8',
-          title: '维护',
-          order: 7,
-          tasks: [
             UserTask(
               id: 'devops-task-retire',
-              title: '退役过时内容',
-              activityId: 'devops-step-8',
-              order: 0,
+              title: '维护',
+              activityId: 'devops-phase-4',
+              order: 2,
               stories: [
                 UserStory(
-                  id: 'devops-story-17',
-                  title: 'release retire 退役过时版本',
+                  id: 'devops-story-14',
+                  title: '退役过时版本',
+                  description: 'release retire -v v0.3.0',
                   taskId: 'devops-task-retire',
                   phase: ReleasePhase.future,
                   status: StoryStatus.todo,
                 ),
                 UserStory(
-                  id: 'devops-story-18',
-                  title: 'code retire 退役废弃子模块',
+                  id: 'devops-story-15',
+                  title: '退役废弃子模块',
+                  description: 'code retire',
                   taskId: 'devops-task-retire',
                   phase: ReleasePhase.future,
                   status: StoryStatus.todo,
@@ -340,14 +290,16 @@ Product _qtcloudProduct() {
               stories: [
                 UserStory(
                   id: 'product-story-1',
-                  title: '建立用户活动泳道（UserActivity）',
+                  title: '建立产品全景骨架',
+                  description: '用户活动泳道（UserActivity）',
                   taskId: 'product-task-map',
                   phase: ReleasePhase.mvp,
                   status: StoryStatus.done,
                 ),
                 UserStory(
                   id: 'product-story-2',
-                  title: '拆解用户任务与用户故事',
+                  title: '拆解任务与故事',
+                  description: '用户任务 → 用户故事',
                   taskId: 'product-task-map',
                   phase: ReleasePhase.mvp,
                   status: StoryStatus.done,
@@ -362,14 +314,16 @@ Product _qtcloudProduct() {
               stories: [
                 UserStory(
                   id: 'product-story-3',
-                  title: '编辑用户故事（3C 或验收标准两种格式）',
+                  title: '编辑用户故事',
+                  description: '3C 或验收标准两种格式',
                   taskId: 'product-task-story',
                   phase: ReleasePhase.mvp,
                   status: StoryStatus.inProgress,
                 ),
                 UserStory(
                   id: 'product-story-4',
-                  title: '对比展示两种用户故事格式',
+                  title: '对比两种故事格式',
+                  description: '对话式 vs 富文本式',
                   taskId: 'product-task-story',
                   phase: ReleasePhase.mvp,
                   status: StoryStatus.inProgress,
@@ -391,7 +345,8 @@ Product _qtcloudProduct() {
               stories: [
                 UserStory(
                   id: 'product-story-5',
-                  title: '拖动 MVP 发布线调整版本范围',
+                  title: '拖动发布线划定版本范围',
+                  description: 'MVP 发布线（Release Line）',
                   taskId: 'product-task-mvp',
                   phase: ReleasePhase.mvp,
                   status: StoryStatus.inProgress,
@@ -399,6 +354,7 @@ Product _qtcloudProduct() {
                 UserStory(
                   id: 'product-story-6',
                   title: '区分 MVP 与未来迭代',
+                  description: '版本边界清晰可见',
                   taskId: 'product-task-mvp',
                   phase: ReleasePhase.mvp,
                   status: StoryStatus.inProgress,
@@ -413,7 +369,8 @@ Product _qtcloudProduct() {
               stories: [
                 UserStory(
                   id: 'product-story-7',
-                  title: '制定版本计划并关联路线图',
+                  title: '对齐各产品版本节奏',
+                  description: '版本计划关联路线图',
                   taskId: 'product-task-version',
                   phase: ReleasePhase.future,
                   status: StoryStatus.todo,
@@ -435,14 +392,16 @@ Product _qtcloudProduct() {
               stories: [
                 UserStory(
                   id: 'product-story-8',
-                  title: '登记产品、状态与负责人',
+                  title: '登记产品与负责人',
+                  description: '产品状态可追踪',
                   taskId: 'product-task-catalog',
                   phase: ReleasePhase.future,
                   status: StoryStatus.todo,
                 ),
                 UserStory(
                   id: 'product-story-9',
-                  title: '第一批实验对象：devops / product / code',
+                  title: '接入第一批实验对象',
+                  description: 'qtcloud-devops / qtcloud-product / qtcloud-code',
                   taskId: 'product-task-catalog',
                   phase: ReleasePhase.future,
                   status: StoryStatus.todo,
@@ -457,7 +416,8 @@ Product _qtcloudProduct() {
               stories: [
                 UserStory(
                   id: 'product-story-10',
-                  title: '跨产品可视化：成熟度、投入、版本时间线',
+                  title: '跨产品可视化对比',
+                  description: '成熟度、投入、版本时间线',
                   taskId: 'product-task-portfolio',
                   phase: ReleasePhase.future,
                   status: StoryStatus.todo,
@@ -472,7 +432,8 @@ Product _qtcloudProduct() {
               stories: [
                 UserStory(
                   id: 'product-story-11',
-                  title: '决策关联产品与依据，可追溯',
+                  title: '记录产品决策',
+                  description: '决策关联产品与依据，可追溯',
                   taskId: 'product-task-decision',
                   phase: ReleasePhase.future,
                   status: StoryStatus.todo,
@@ -512,14 +473,16 @@ Product _qtcloudCode() {
               stories: [
                 UserStory(
                   id: 'code-story-1',
-                  title: '5 语言解析（Rust / Python / Go / Dart / TS）',
+                  title: '扫描多语言代码',
+                  description: '5 语言解析：Rust / Python / Go / Dart / TS',
                   taskId: 'code-task-lint',
                   phase: ReleasePhase.mvp,
                   status: StoryStatus.done,
                 ),
                 UserStory(
                   id: 'code-story-2',
-                  title: '5 类检测器（过长函数 / unsafe / 过长参数 / 未使用变量 / 缺失测试）',
+                  title: '发现代码问题',
+                  description: '5 类检测器：过长函数 / unsafe / 过长参数 / 未使用变量 / 缺失测试',
                   taskId: 'code-task-lint',
                   phase: ReleasePhase.mvp,
                   status: StoryStatus.done,
@@ -534,21 +497,24 @@ Product _qtcloudCode() {
               stories: [
                 UserStory(
                   id: 'code-story-3',
-                  title: '--mode lint：仅规则引擎（秒级）',
+                  title: '仅规则引擎快速扫描',
+                  description: '--mode lint，秒级',
                   taskId: 'code-task-mode',
                   phase: ReleasePhase.mvp,
                   status: StoryStatus.done,
                 ),
                 UserStory(
                   id: 'code-story-4',
-                  title: '--mode llm：规则引擎 + LLM 审查（默认）',
+                  title: '规则引擎 + AI 审查',
+                  description: '--mode llm，默认模式',
                   taskId: 'code-task-mode',
                   phase: ReleasePhase.mvp,
                   status: StoryStatus.inProgress,
                 ),
                 UserStory(
                   id: 'code-story-5',
-                  title: '--mode deep：规则引擎 + LLM + LLM 修复（需审核）',
+                  title: 'AI 辅助自动修复',
+                  description: '--mode deep，需人工审核',
                   taskId: 'code-task-mode',
                   phase: ReleasePhase.future,
                   status: StoryStatus.todo,
@@ -570,14 +536,16 @@ Product _qtcloudCode() {
               stories: [
                 UserStory(
                   id: 'code-story-6',
-                  title: 'reflect trace：追溯调用链',
+                  title: '追溯问题调用链',
+                  description: 'reflect trace',
                   taskId: 'code-task-trace',
                   phase: ReleasePhase.mvp,
                   status: StoryStatus.inProgress,
                 ),
                 UserStory(
                   id: 'code-story-7',
-                  title: 'reflect slice：提取代码切片',
+                  title: '提取代码切片',
+                  description: 'reflect slice',
                   taskId: 'code-task-trace',
                   phase: ReleasePhase.mvp,
                   status: StoryStatus.todo,
@@ -592,14 +560,16 @@ Product _qtcloudCode() {
               stories: [
                 UserStory(
                   id: 'code-story-8',
-                  title: 'reflect graph：生成依赖图',
+                  title: '生成依赖关系图',
+                  description: 'reflect graph',
                   taskId: 'code-task-graph',
                   phase: ReleasePhase.future,
                   status: StoryStatus.todo,
                 ),
                 UserStory(
                   id: 'code-story-9',
-                  title: 'reflect suggest：获取修改建议',
+                  title: '获取修改建议',
+                  description: 'reflect suggest',
                   taskId: 'code-task-graph',
                   phase: ReleasePhase.future,
                   status: StoryStatus.todo,
@@ -621,21 +591,24 @@ Product _qtcloudCode() {
               stories: [
                 UserStory(
                   id: 'code-story-10',
-                  title: 'refactor rename：符号表分析',
+                  title: '安全重命名符号',
+                  description: 'refactor rename，符号表分析',
                   taskId: 'code-task-rename',
                   phase: ReleasePhase.mvp,
                   status: StoryStatus.inProgress,
                 ),
                 UserStory(
                   id: 'code-story-11',
-                  title: '--dry-run 预览将要写入的修改',
+                  title: '预览重构改动',
+                  description: '--dry-run 预览写入',
                   taskId: 'code-task-rename',
                   phase: ReleasePhase.mvp,
                   status: StoryStatus.todo,
                 ),
                 UserStory(
                   id: 'code-story-12',
-                  title: '实际文件写入',
+                  title: '写入重构结果',
+                  description: '实际文件写入',
                   taskId: 'code-task-rename',
                   phase: ReleasePhase.future,
                   status: StoryStatus.todo,
@@ -650,7 +623,8 @@ Product _qtcloudCode() {
               stories: [
                 UserStory(
                   id: 'code-story-13',
-                  title: 'contract init / list / validate',
+                  title: '校验代码契约',
+                  description: 'contract init / list / validate',
                   taskId: 'code-task-contract',
                   phase: ReleasePhase.future,
                   status: StoryStatus.todo,
