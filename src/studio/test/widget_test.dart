@@ -51,9 +51,10 @@ void main() {
     expect(find.byKey(const Key('release-toggle-MVP 版本')), findsOneWidget);
     expect(find.byKey(const Key('release-toggle-未来迭代')), findsOneWidget);
 
-    // 双层滚动条常显（垂直 + 水平）
+    // 双层滚动条容器常显；水平方向 11 列必然溢出 → 拇指必渲染
     expect(find.byKey(const Key('scrollbar-vertical')), findsOneWidget);
     expect(find.byKey(const Key('scrollbar-horizontal')), findsOneWidget);
+    expect(find.byKey(const Key('scrollbar-thumb-horizontal')), findsOneWidget);
   });
 
   testWidgets('产品切换器切换产品（每个产品一个空间）', (WidgetTester tester) async {

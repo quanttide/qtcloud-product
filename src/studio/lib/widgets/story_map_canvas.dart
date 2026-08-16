@@ -147,7 +147,7 @@ class _StoryMapCanvasViewState extends State<StoryMapCanvasView> {
             top: 4,
             right: 4,
             bottom: 14,
-            width: 8,
+            width: 10,
             child: _OverlayScrollbar(
               key: const Key('scrollbar-vertical'),
               controller: _verticalController,
@@ -159,7 +159,7 @@ class _StoryMapCanvasViewState extends State<StoryMapCanvasView> {
             left: 4,
             right: 14,
             bottom: 4,
-            height: 8,
+            height: 10,
             child: _OverlayScrollbar(
               key: const Key('scrollbar-horizontal'),
               controller: _horizontalController,
@@ -237,21 +237,23 @@ class _OverlayScrollbarState extends State<_OverlayScrollbar> {
   Widget build(BuildContext context) {
     const thumbMinSize = 24.0;
     final controller = widget.controller;
-    if (!controller.hasClients) return const SizedBox.shrink();
-    final position = controller.position;
-    // 布局完成前 content dimensions 不可用，需保护（避免 maxScrollExtent 空检查崩溃）
-    if (!position.hasContentDimensions) return const SizedBox.shrink();
-    final maxExtent = position.maxScrollExtent;
-    if (maxExtent <= 0) return const SizedBox.shrink();
-
-    final viewport = position.viewportDimension;
-    final ratio = viewport / (viewport + maxExtent); // 拇指长度比例
-    final fraction = position.pixels / maxExtent; // 拇指位置比例
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final track =
-            widget.axis == Axis.vertical ? constraints.maxHeight : constraints.maxWidth;
+        // 在布局阶段读取滚动位置：此时 content dimensions 已就绪
+        // （build 阶段读取会早于布局，导致永远隐藏且无重建通知）
+        if (!controller.hasClients) return const SizedBox.shrink();
+        final position = controller.position;
+        if (!position.hasContentDimensions) return const SizedBox.shrink();
+        final maxExtent = position.maxScrollExtent;
+        if (maxExtent <= 0) return const SizedBox.shrink();
+
+        final viewport = position.viewportDimension;
+        final ratio = viewport / (viewport + maxExtent); // 拇指长度比例
+        final fraction = position.pixels / maxExtent; // 拇指位置比例
+        final track = widget.axis == Axis.vertical
+            ? constraints.maxHeight
+            : constraints.maxWidth;
         final thumb = (track * ratio).clamp(thumbMinSize, track);
         final thumbOffset = fraction * (track - thumb);
 
@@ -273,14 +275,15 @@ class _OverlayScrollbarState extends State<_OverlayScrollbar> {
               Positioned.fill(
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.06),
-                    borderRadius: BorderRadius.circular(4),
+                    color: Colors.black.withValues(alpha: 0.10),
+                    borderRadius: BorderRadius.circular(5),
                   ),
                 ),
               ),
-              // 拇指
+              // 拇指（带 Key，供测试断言真实渲染）
               if (widget.axis == Axis.vertical)
                 Positioned(
+                  key: Key('scrollbar-thumb-${widget.axis.name}'),
                   top: thumbOffset,
                   left: 0,
                   right: 0,
@@ -289,6 +292,7 @@ class _OverlayScrollbarState extends State<_OverlayScrollbar> {
                 )
               else
                 Positioned(
+                  key: Key('scrollbar-thumb-${widget.axis.name}'),
                   left: thumbOffset,
                   top: 0,
                   bottom: 0,
@@ -309,8 +313,8 @@ class _Thumb extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.35),
-        borderRadius: BorderRadius.circular(4),
+        color: Colors.black.withValues(alpha: 0.45),
+        borderRadius: BorderRadius.circular(5),
       ),
     );
   }
