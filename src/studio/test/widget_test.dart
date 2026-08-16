@@ -14,46 +14,66 @@ void main() {
     }
   });
 
-  testWidgets('应用打开即展示默认产品的故事地图', (WidgetTester tester) async {
+  testWidgets('应用打开：产品切换器 + 产品空间导航 + 需求看板', (WidgetTester tester) async {
     tester.view.physicalSize = const Size(1600, 1000);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.reset);
 
     await tester.pumpWidget(const MyApp());
 
-    // 侧边导航：品牌 + 三个产品
-    expect(find.text('量潮产品云'), findsWidgets);
-    expect(find.byKey(const Key('nav-qtcloud-devops')), findsOneWidget);
-    expect(find.byKey(const Key('nav-qtcloud-product')), findsOneWidget);
-    expect(find.byKey(const Key('nav-qtcloud-code')), findsOneWidget);
+    // 顶部产品切换器（默认第一个产品 qtcloud-devops）
+    expect(find.text('量潮产品云'), findsOneWidget);
+    expect(find.byKey(const Key('product-switcher')), findsOneWidget);
+    expect(find.text('qtcloud-devops'), findsWidgets);
 
-    // 默认打开第一个产品（qtcloud-devops）的四阶段地图
-    expect(find.text('量潮产品云 · qtcloud-devops'), findsOneWidget);
+    // 产品空间侧边导航：需求 / 规格
+    expect(find.byKey(const Key('nav-requirements')), findsOneWidget);
+    expect(find.byKey(const Key('nav-specification')), findsOneWidget);
+
+    // 需求模块：devops 四阶段用户故事地图看板
     expect(find.text('📋 计划与状态'), findsOneWidget);
+    expect(find.text('💻 开发编码'), findsOneWidget);
+    expect(find.text('✅ 测试与验证'), findsOneWidget);
     expect(find.text('🚀 正式发布'), findsOneWidget);
   });
 
-  testWidgets('侧边导航切换产品', (WidgetTester tester) async {
+  testWidgets('产品切换器切换产品（每个产品一个空间）', (WidgetTester tester) async {
     tester.view.physicalSize = const Size(1600, 1000);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.reset);
 
     await tester.pumpWidget(const MyApp());
 
-    await tester.tap(find.byKey(const Key('nav-qtcloud-product')));
+    // 打开切换器，选择 qtcloud-product
+    await tester.tap(find.byKey(const Key('product-switcher')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('switch-qtcloud-product')));
     await tester.pumpAndSettle();
 
-    expect(find.text('量潮产品云 · qtcloud-product'), findsOneWidget);
+    // 空间切换：侧边导航标识与需求看板内容都变为该产品
+    expect(find.text('qtcloud-product'), findsWidgets);
     expect(find.text('管理用户故事'), findsOneWidget);
     expect(find.text('制定版本计划'), findsOneWidget);
     expect(find.text('管理产品组合'), findsOneWidget);
+  });
 
-    await tester.tap(find.byKey(const Key('nav-qtcloud-code')));
+  testWidgets('产品空间内切换模块：规格（事件风暴）占位', (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(1600, 1000);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(const MyApp());
+
+    // 切到规格模块
+    await tester.tap(find.byKey(const Key('nav-specification')));
     await tester.pumpAndSettle();
+    expect(find.text('规格（事件风暴）'), findsOneWidget);
+    expect(find.text('📋 计划与状态'), findsNothing);
 
-    expect(find.text('量潮产品云 · qtcloud-code'), findsOneWidget);
-    expect(find.text('审查代码'), findsOneWidget);
-    expect(find.text('执行重构'), findsOneWidget);
+    // 切回需求模块
+    await tester.tap(find.byKey(const Key('nav-requirements')));
+    await tester.pumpAndSettle();
+    expect(find.text('📋 计划与状态'), findsOneWidget);
   });
 
   testWidgets('发布线拖拽精确跟随指针（多事件同帧不抖动）', (WidgetTester tester) async {
