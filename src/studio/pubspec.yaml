@@ -58,9 +58,10 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # 种子数据：assets/data 是到仓库根 assets/data 的符号链接（CLI 加工，Studio 渲染）
+  # 种子数据：assets 是指向仓库根 assets 的符号链接（CLI 加工，Studio 渲染）
   assets:
-    - assets/data/products.json
+    - assets/data/manifest.json
+    - assets/data/products/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

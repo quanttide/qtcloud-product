@@ -1,0 +1,234 @@
+{
+  "id": "qtcloud-devops",
+  "name": "qtcloud-devops",
+  "title": "量潮DevOps云",
+  "tagline": "把发布规范封装成 CLI，八步流程驱动价值流动",
+  "designIdea": "严格按照 DevOps 八步流程设计，在故事地图上聚合为四个阶段：计划与状态 → 开发编码 → 测试与验证 → 正式发布。每个阶段以可执行命令落地（code status / sync，release stage / publish / retire），约束结果而非行为。",
+  "storyMap": {
+    "id": "map-devops",
+    "name": "qtcloud-devops",
+    "mvpLinePosition": 0.55,
+    "activities": [
+      {
+        "id": "devops-phase-1",
+        "title": "📋 计划与状态",
+        "order": 0,
+        "tasks": [
+          {
+            "id": "devops-task-status",
+            "title": "了解当前状态",
+            "activityId": "devops-phase-1",
+            "order": 0,
+            "stories": [
+              {
+                "id": "devops-story-1",
+                "title": "查看迭代计划与待办",
+                "taskId": "devops-task-status",
+                "phase": "mvp",
+                "status": "done",
+                "description": "ROADMAP / BUGS / TODO"
+              },
+              {
+                "id": "devops-story-2",
+                "title": "了解子模块状态",
+                "taskId": "devops-task-status",
+                "phase": "mvp",
+                "status": "done",
+                "description": "qtcloud-devops code status"
+              }
+            ]
+          },
+          {
+            "id": "devops-task-sync",
+            "title": "同步子模块",
+            "activityId": "devops-phase-1",
+            "order": 1,
+            "stories": [
+              {
+                "id": "devops-story-3",
+                "title": "同步代码仓库",
+                "taskId": "devops-task-sync",
+                "phase": "mvp",
+                "status": "done",
+                "description": "code sync：推送 → 更新父指针 → 推送父仓库"
+              }
+            ]
+          },
+          {
+            "id": "devops-task-audit",
+            "title": "审查代码质量",
+            "activityId": "devops-phase-1",
+            "order": 2,
+            "stories": [
+              {
+                "id": "devops-story-4",
+                "title": "进行代码质量审查",
+                "taskId": "devops-task-audit",
+                "phase": "mvp",
+                "status": "inProgress",
+                "description": "code audit --json"
+              },
+              {
+                "id": "devops-story-5",
+                "title": "从审计自动生成规划",
+                "taskId": "devops-task-audit",
+                "phase": "future",
+                "status": "todo",
+                "description": "todo / roadmap-from-audit 流水线"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "devops-phase-2",
+        "title": "💻 开发编码",
+        "order": 1,
+        "tasks": [
+          {
+            "id": "devops-task-develop",
+            "title": "编写并测试代码",
+            "activityId": "devops-phase-2",
+            "order": 0,
+            "stories": [
+              {
+                "id": "devops-story-6",
+                "title": "修改代码并保证测试通过",
+                "taskId": "devops-task-develop",
+                "phase": "mvp",
+                "status": "done",
+                "description": "cargo test（含 cli / code / release 集成测试）"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "devops-phase-3",
+        "title": "✅ 测试与验证",
+        "order": 2,
+        "tasks": [
+          {
+            "id": "devops-task-preflight",
+            "title": "预发布验证",
+            "activityId": "devops-phase-3",
+            "order": 0,
+            "stories": [
+              {
+                "id": "devops-story-7",
+                "title": "检查版本一致性",
+                "taskId": "devops-task-preflight",
+                "phase": "mvp",
+                "status": "inProgress",
+                "description": "preflight.sh"
+              },
+              {
+                "id": "devops-story-8",
+                "title": "标记预发布版本",
+                "taskId": "devops-task-preflight",
+                "phase": "mvp",
+                "status": "inProgress",
+                "description": "release stage -v cli/v0.4.1-rc.1 触发 CI"
+              }
+            ]
+          },
+          {
+            "id": "devops-task-ci",
+            "title": "CI 验证",
+            "activityId": "devops-phase-3",
+            "order": 1,
+            "stories": [
+              {
+                "id": "devops-story-9",
+                "title": "等待构建与测试通过",
+                "taskId": "devops-task-ci",
+                "phase": "mvp",
+                "status": "inProgress",
+                "description": "CI 完成后进入下一步"
+              },
+              {
+                "id": "devops-story-10",
+                "title": "随时查看发布状态",
+                "taskId": "devops-task-ci",
+                "phase": "mvp",
+                "status": "inProgress",
+                "description": "release status"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "devops-phase-4",
+        "title": "🚀 正式发布",
+        "order": 3,
+        "tasks": [
+          {
+            "id": "devops-task-publish",
+            "title": "正式发布",
+            "activityId": "devops-phase-4",
+            "order": 0,
+            "stories": [
+              {
+                "id": "devops-story-11",
+                "title": "发布软件版本",
+                "taskId": "devops-task-publish",
+                "phase": "mvp",
+                "status": "inProgress",
+                "description": "release publish -v cli/v0.4.1 -y"
+              },
+              {
+                "id": "devops-story-12",
+                "title": "自动分发到注册源",
+                "taskId": "devops-task-publish",
+                "phase": "mvp",
+                "status": "todo",
+                "description": "CI 推送 crates.io 与 PyPI"
+              }
+            ]
+          },
+          {
+            "id": "devops-task-verify",
+            "title": "验证发布",
+            "activityId": "devops-phase-4",
+            "order": 1,
+            "stories": [
+              {
+                "id": "devops-story-13",
+                "title": "确认发布成功",
+                "taskId": "devops-task-verify",
+                "phase": "mvp",
+                "status": "todo",
+                "description": "release status；cargo search / pip install 验证"
+              }
+            ]
+          },
+          {
+            "id": "devops-task-retire",
+            "title": "维护",
+            "activityId": "devops-phase-4",
+            "order": 2,
+            "stories": [
+              {
+                "id": "devops-story-14",
+                "title": "退役过时版本",
+                "taskId": "devops-task-retire",
+                "phase": "future",
+                "status": "todo",
+                "description": "release retire -v v0.3.0"
+              },
+              {
+                "id": "devops-story-15",
+                "title": "退役废弃子模块",
+                "taskId": "devops-task-retire",
+                "phase": "future",
+                "status": "todo",
+                "description": "code retire"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
