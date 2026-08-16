@@ -51,3 +51,5 @@
 ## 当前阶段
 
 单产品故事地图已可用（MVP 发布线、拖拽组织）。组合视图是下一步（见 [想法记录](ideas.md) 的演化路径）。
+
+第一批实验对象：**qtcloud-devops、qtcloud-product、qtcloud-code**（试点接入产品目录与组合视图，见 [想法记录](ideas.md)）。
