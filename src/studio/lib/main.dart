@@ -68,12 +68,6 @@ class _ProductCloudPageState extends State<ProductCloudPage> {
     debugPrint('点击故事: ${story.title}');
   }
 
-  void _debugMVPLineMove(double position) {
-    debugPrint(
-      'Release Line 移动到: ${(position * 100).toStringAsFixed(1)}%',
-    );
-  }
-
   IconData _iconFor(String id) {
     switch (id) {
       case 'qtcloud-devops':
@@ -194,7 +188,6 @@ class _ProductCloudPageState extends State<ProductCloudPage> {
                         mapData: _selectedProduct.storyMap,
                         onStoryMove: _debugStoryMove,
                         onStoryTap: _debugStoryTap,
-                        onMVPLineMove: _debugMVPLineMove,
                       ),
                     ProductModule.specification =>
                       const _SpecificationPlaceholder(),

@@ -1,21 +1,27 @@
 import 'package:flutter/material.dart';
+import '../models/column_def.dart';
 import '../models/story_map_models.dart';
-import 'activity_section.dart';
+import 'story_card.dart';
+
+/// 矩阵列宽与列间距（所有行保持一致，保证列对齐）
+const double _columnWidth = 220.0;
+const double _columnGap = 8.0;
+
+/// 跨列单元格宽度：活动层跨列合并时使用
+double _cellWidth(int span) => span * (_columnWidth + _columnGap) - _columnGap;
 
 /// 故事地图画布页（独立页面，含 AppBar）
-/// 供独立路由使用；嵌入侧边导航时请直接使用 [StoryMapCanvasView]。
+/// 供独立路由使用；嵌入产品空间时请直接使用 [StoryMapCanvasView]。
 class StoryMapCanvasPage extends StatelessWidget {
   final StoryMap mapData;
   final Function(UserStory, String)? onStoryMove;
   final Function(UserStory)? onStoryTap;
-  final Function(double)? onMVPLineMove;
 
   const StoryMapCanvasPage({
     super.key,
     required this.mapData,
     this.onStoryMove,
     this.onStoryTap,
-    this.onMVPLineMove,
   });
 
   @override
@@ -30,25 +36,27 @@ class StoryMapCanvasPage extends StatelessWidget {
         mapData: mapData,
         onStoryMove: onStoryMove,
         onStoryTap: onStoryTap,
-        onMVPLineMove: onMVPLineMove,
       ),
     );
   }
 }
 
 /// 故事地图画布视图（无 Scaffold，可嵌入任意布局）
+///
+/// 需求屏（用户故事地图看板）：二维矩阵 + 跨列合并。
+/// - X 轴（列）：任务列；每列 = 活动层（橙，跨列合并）+ 任务层（紫）+ 故事卡片
+/// - Y 轴（行）：Release 版本行（如 'MVP 版本' / '未来迭代'），可折叠
+/// - 领域模型经 [projectToColumns] 投影为列驱动结构渲染
 class StoryMapCanvasView extends StatefulWidget {
   final StoryMap mapData;
   final Function(UserStory, String)? onStoryMove;
   final Function(UserStory)? onStoryTap;
-  final Function(double)? onMVPLineMove;
 
   const StoryMapCanvasView({
     super.key,
     required this.mapData,
     this.onStoryMove,
     this.onStoryTap,
-    this.onMVPLineMove,
   });
 
   @override
@@ -56,196 +64,297 @@ class StoryMapCanvasView extends StatefulWidget {
 }
 
 class _StoryMapCanvasViewState extends State<StoryMapCanvasView> {
-  late double mvpLinePosition;
-
-  /// 拖拽起点（全局 Y 坐标）与起点发布线位置。
-  /// 使用绝对坐标跟踪，避免帧率不足时增量累加导致的抖动/乱画。
-  double? _dragStartGlobalY;
-  double? _dragStartPosition;
-
-  @override
-  void initState() {
-    super.initState();
-    mvpLinePosition = widget.mapData.mvpLinePosition;
-  }
+  /// 已折叠的 Release 行
+  final Set<String> _collapsedReleases = {};
 
   @override
   void didUpdateWidget(StoryMapCanvasView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.mapData.mvpLinePosition != oldWidget.mapData.mvpLinePosition) {
-      mvpLinePosition = widget.mapData.mvpLinePosition;
+    if (widget.mapData.id != oldWidget.mapData.id) {
+      _collapsedReleases.clear();
     }
   }
 
-  void _handleDragStart(DragStartDetails details) {
-    _dragStartGlobalY = details.globalPosition.dy;
-    _dragStartPosition = mvpLinePosition;
-  }
-
-  void _handleDragUpdate(DragUpdateDetails details, double maxHeight) {
-    final startY = _dragStartGlobalY;
-    final startPosition = _dragStartPosition;
-    if (startY == null || startPosition == null) return;
-    final delta = details.globalPosition.dy - startY;
+  void _toggleRelease(String release) {
     setState(() {
-      mvpLinePosition = (startPosition + delta / maxHeight).clamp(0.0, 1.0);
-      widget.onMVPLineMove?.call(mvpLinePosition);
+      if (!_collapsedReleases.add(release)) {
+        _collapsedReleases.remove(release);
+      }
     });
-  }
-
-  void _handleDragEnd(DragEndDetails details) {
-    _dragStartGlobalY = null;
-    _dragStartPosition = null;
-  }
-
-  void _handleDragCancel() {
-    _dragStartGlobalY = null;
-    _dragStartPosition = null;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        // 主要内容：垂直滚动，用户活动分组自上而下排列
-        // （用户活动 → 用户任务列 → 用户故事卡片 三层结构）
-        SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Container(
-            color: Colors.grey[50],
+    final columns = projectToColumns(widget.mapData);
+    final releases = collectReleases(columns);
+
+    return Container(
+      color: Colors.grey[50],
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Padding(
             padding: const EdgeInsets.all(12.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: widget.mapData.activities.map((activity) {
-                return ActivitySection(
-                  activity: activity,
-                  onStoryMove: widget.onStoryMove,
-                  onStoryTap: widget.onStoryTap,
-                );
-              }).toList(),
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 1. 活动层（橙色，跨列合并）
+                _ActivityLayerRow(columns: columns),
+                const SizedBox(height: _columnGap),
+                // 2. 任务层（紫色）
+                _TaskLayerRow(columns: columns),
+                const SizedBox(height: 12.0),
+                // 3. Release 行 × N（蓝色故事卡片行，可折叠）
+                for (final release in releases) ...[
+                  _ReleaseRow(
+                    release: release,
+                    columns: columns,
+                    collapsed: _collapsedReleases.contains(release),
+                    onToggle: () => _toggleRelease(release),
+                    onStoryMove: widget.onStoryMove,
+                    onStoryTap: widget.onStoryTap,
+                  ),
+                  const SizedBox(height: 8.0),
+                ],
+              ],
             ),
           ),
         ),
-        // Release Line - 可拖动的分界线
-        Positioned(
-          left: 0,
-          right: 0,
-          top: 0,
-          bottom: 0,
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final mvpTop = constraints.maxHeight * mvpLinePosition;
-              return MouseRegion(
-                cursor: SystemMouseCursors.resizeRow,
-                child: Stack(
-                  children: [
-                    // MVP 标签（弱化）
-                    Positioned(
-                      top: 16,
-                      right: 16,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFFEBEE),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Text(
-                          'MVP',
-                          style: TextStyle(
-                            color: Color(0xFFC62828),
-                            fontWeight: FontWeight.w600,
-                            fontSize: 10,
-                          ),
-                        ),
-                      ),
-                    ),
-                    // Release Line（发布线）：细浅色虚线
-                    Positioned(
-                      top: mvpTop,
-                      left: 0,
-                      right: 0,
-                      child: CustomPaint(
-                        size: const Size(double.infinity, 1.5),
-                        painter: const _DashedLinePainter(Color(0xFF90A4AE)),
-                      ),
-                    ),
-                    // 拖动交互区域（绝对位置跟踪，避免乱画）
-                    Positioned(
-                      top: (mvpTop - 10).clamp(0.0, constraints.maxHeight - 20),
-                      left: 0,
-                      right: 0,
-                      height: 20.0,
-                      child: GestureDetector(
-                        key: const Key('mvp-line-drag'),
-                        behavior: HitTestBehavior.opaque,
-                        onVerticalDragStart: _handleDragStart,
-                        onVerticalDragUpdate: (DragUpdateDetails details) {
-                          _handleDragUpdate(details, constraints.maxHeight);
-                        },
-                        onVerticalDragEnd: _handleDragEnd,
-                        onVerticalDragCancel: _handleDragCancel,
-                        child: MouseRegion(
-                          cursor: SystemMouseCursors.resizeRow,
-                          child: Container(
-                            color: Colors.transparent,
-                          ),
-                        ),
-                      ),
-                    ),
-                    // Future 标签（弱化）
-                    Positioned(
-                      bottom: 16,
-                      right: 16,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFECEFF1),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Text(
-                          'Future',
-                          style: TextStyle(
-                            color: Color(0xFF607D8B),
-                            fontWeight: FontWeight.w600,
-                            fontSize: 10,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+      ),
+    );
+  }
+}
+
+// ============ 活动层（橙色，跨列合并） ============
+
+class _ActivityLayerRow extends StatelessWidget {
+  final List<ColumnDef> columns;
+
+  const _ActivityLayerRow({required this.columns});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (var i = 0; i < columns.length; i++)
+          // 仅渲染每组连续同活动列的第一列，宽度按跨列系数合并
+          if (i == 0 ||
+              columns[i].activityTitle != columns[i - 1].activityTitle)
+            Container(
+              width: _cellWidth(columns[i].flex),
+              margin: const EdgeInsets.only(right: _columnGap),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFB74D),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text(
+                columns[i].activityTitle,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w800,
+                  color: Color(0xFF4E342E),
                 ),
-              );
-            },
-          ),
-        ),
+              ),
+            ),
       ],
     );
   }
 }
 
-/// 细浅色虚线画笔：用于 Release Line（发布线）
-class _DashedLinePainter extends CustomPainter {
-  final Color color;
+// ============ 任务层（紫色） ============
 
-  const _DashedLinePainter(this.color);
+class _TaskLayerRow extends StatelessWidget {
+  final List<ColumnDef> columns;
+
+  const _TaskLayerRow({required this.columns});
 
   @override
-  void paint(Canvas canvas, Size size) {
-    // 防御：无界宽度下不绘制（避免异常布局时无限循环画点）
-    if (size.width <= 0 || size.width.isInfinite) return;
-    final paint = Paint()
-      ..color = color
-      ..strokeWidth = 1.5;
-    const dashWidth = 6.0;
-    const dashSpace = 4.0;
-    double x = 0;
-    while (x < size.width) {
-      canvas.drawLine(Offset(x, 0), Offset(x + dashWidth, 0), paint);
-      x += dashWidth + dashSpace;
-    }
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (final column in columns)
+          Container(
+            width: _columnWidth,
+            margin: const EdgeInsets.only(right: _columnGap),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            decoration: BoxDecoration(
+              color: const Color(0xFFB39DDB),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Text(
+              column.taskTitle,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+              ),
+            ),
+          ),
+      ],
+    );
   }
+}
+
+// ============ Release 行（可折叠） ============
+
+class _ReleaseRow extends StatelessWidget {
+  final String release;
+  final List<ColumnDef> columns;
+  final bool collapsed;
+  final VoidCallback onToggle;
+  final Function(UserStory, String)? onStoryMove;
+  final Function(UserStory)? onStoryTap;
+
+  const _ReleaseRow({
+    required this.release,
+    required this.columns,
+    required this.collapsed,
+    required this.onToggle,
+    this.onStoryMove,
+    this.onStoryTap,
+  });
 
   @override
-  bool shouldRepaint(_DashedLinePainter oldDelegate) =>
-      oldDelegate.color != color;
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Release 标题行：灰分隔线 + 版本号 + 折叠三角
+        InkWell(
+          key: Key('release-toggle-$release'),
+          onTap: onToggle,
+          borderRadius: BorderRadius.circular(4),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+            child: Row(
+              children: [
+                Icon(
+                  collapsed ? Icons.chevron_right : Icons.expand_more,
+                  size: 16,
+                  color: Colors.grey[600],
+                ),
+                const SizedBox(width: 2),
+                Icon(Icons.event, size: 13, color: Colors.grey[600]),
+                const SizedBox(width: 6),
+                Text(
+                  release,
+                  style: TextStyle(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.grey[800],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 6),
+        if (!collapsed)
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (final column in columns)
+                _StoryCell(
+                  column: column,
+                  release: release,
+                  onStoryMove: onStoryMove,
+                  onStoryTap: onStoryTap,
+                ),
+            ],
+          ),
+      ],
+    );
+  }
+}
+
+// ============ 故事单元格（矩阵列容器，拖放目标） ============
+
+class _StoryCell extends StatelessWidget {
+  final ColumnDef column;
+  final String release;
+  final Function(UserStory, String)? onStoryMove;
+  final Function(UserStory)? onStoryTap;
+
+  const _StoryCell({
+    required this.column,
+    required this.release,
+    this.onStoryMove,
+    this.onStoryTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final stories = column.stories[release] ?? const <UserStory>[];
+
+    return Container(
+      width: _columnWidth,
+      margin: const EdgeInsets.only(right: _columnGap),
+      child: DragTarget<UserStory>(
+        onAcceptWithDetails: (DragTargetDetails<UserStory> details) {
+          final story = details.data;
+          // 如果故事属于不同的任务，触发 onStoryMove
+          if (story.taskId != column.taskId) {
+            onStoryMove?.call(story, column.taskId);
+          }
+        },
+        builder: (context, candidateData, rejectedData) {
+          return Container(
+            constraints: const BoxConstraints(minHeight: 44),
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(
+                color: candidateData.isNotEmpty
+                    ? Colors.green
+                    : Colors.grey[200]!,
+                width: candidateData.isNotEmpty ? 2.0 : 1.0,
+              ),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Column(
+              children: [
+                ...stories.map((story) {
+                  return LongPressDraggable<UserStory>(
+                    data: story,
+                    feedback: Material(
+                      elevation: 5.0,
+                      borderRadius: BorderRadius.circular(6.0),
+                      child: StoryCard(story: story),
+                    ),
+                    childWhenDragging: Opacity(
+                      opacity: 0.5,
+                      child: StoryCard(story: story),
+                    ),
+                    child: StoryCard(
+                      story: story,
+                      onTap: () => onStoryTap?.call(story),
+                    ),
+                  );
+                }),
+                if (stories.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Text(
+                      '—',
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: Colors.grey[300],
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
 }

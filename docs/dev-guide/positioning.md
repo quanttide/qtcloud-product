@@ -41,14 +41,14 @@
 ### 决策机制
 
 - **产品目录**：登记产品、状态与负责人，形成产品清单。
-- **MVP 发布线**：单产品版本范围的边界，可拖动调整。
+- **Release 行**：故事按发布版本（MVP / 未来迭代）分组为行，行间即版本边界，可折叠。
 - **版本计划**：产品的迭代节奏。
 - **决策记录**：每个决策关联产品与依据，"为什么做这个"可追溯。
 
 ### 不变的原则
 
 - **隐性 → 显式**：产品结构以共享视图存在，而非个人头脑。
-- **领域模型与 UI 组件分离**：数据层（UserActivity / UserTask / UserStory）与视图层（ActivitySection / TaskColumn / StoryCard）命名与职责分离。
+- **领域模型与 UI 组件分离**：数据层（UserActivity / UserTask / UserStory）与视图层（ActivityLayerRow / TaskLayerRow / ReleaseRow / StoryCard）命名与职责分离。
 - **对照**：对照是认知工具——好与坏对照、产品与产品对照。跨产品对照是组合层新增的对照维度。
 
 ## 当前阶段

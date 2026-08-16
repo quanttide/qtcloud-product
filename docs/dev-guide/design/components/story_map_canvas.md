@@ -1,5 +1,9 @@
 # 用户故事地图
 
+> **⚠️ 已过时**：本文档描述早期「活动分组 → 任务列」嵌套布局与 Release Line 方案。
+> 需求屏现采用「二维矩阵 + 跨列合并」布局（活动层 → 任务层 → Release 行，可折叠），
+> 最新设计见 [需求屏设计](../../../../src/studio/doc/screens/requirement_screen.md)。
+
 既然我们已经明确了“领域模型”与“UI组件”分离的设计哲学，那么 StoryMapCanvas 的设计重点就不再是“存数据”，而是“展示”与“交互”。
 
 在 Flutter 中，StoryMapCanvas 应该是一个巨大的、可滚动的容器组件。它的核心职责是协调 ActivitySection（用户活动分组）与 TaskColumn（用户任务列）的布局，并处理复杂的拖拽排序逻辑。

@@ -16,7 +16,7 @@
 
 领域模型（数据）与 UI 组件（视图）分离的命名规范。
 
-- [架构设计](architecture.md)：领域模型类名（UserActivity / UserTask / UserStory / StoryMap）与 UI 组件类名（ActivitySection / TaskColumn / StoryCard / StoryMapCanvas）的命名映射、数据流向与组合逻辑。
+- [架构设计](architecture.md)：领域模型类名（UserActivity / UserTask / UserStory / StoryMap）与 UI 组件类名（ActivityLayerRow / TaskLayerRow / ReleaseRow / StoryCard / StoryMapCanvas）的命名映射、数据流向与组合逻辑。
 
 ## 交互设计
 
