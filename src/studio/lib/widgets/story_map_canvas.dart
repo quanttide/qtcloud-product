@@ -101,50 +101,216 @@ class _StoryMapCanvasViewState extends State<StoryMapCanvasView> {
 
     return Container(
       color: Colors.grey[50],
-      // 双层滚动各自带常显滚动条（thumbVisibility），提示可滚动区域
-      child: Scrollbar(
-        controller: _verticalController,
-        thumbVisibility: true,
-        child: SingleChildScrollView(
-          controller: _verticalController,
-          scrollDirection: Axis.vertical,
-          child: Scrollbar(
-            controller: _horizontalController,
-            thumbVisibility: true,
-            // 内层滚动通知 depth=1：水平滚动条只响应内层滚动
-            notificationPredicate: (notification) => notification.depth == 1,
+      // 双层滚动 + 视口叠加滚动条：
+      // 内层 Scrollbar 会跟随垂直内容（藏在底部），改为叠加在视口边缘的
+      // 常显滚动条（垂直在右、水平在底），保证两个方向都可见、可拖动。
+      child: Stack(
+        children: [
+          Positioned.fill(
             child: SingleChildScrollView(
-              controller: _horizontalController,
-              scrollDirection: Axis.horizontal,
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // 1. 活动层（橙色，跨列合并）
-                    _ActivityLayerRow(columns: columns),
-                    const SizedBox(height: _columnGap),
-                    // 2. 任务层（紫色）
-                    _TaskLayerRow(columns: columns),
-                    const SizedBox(height: 12.0),
-                    // 3. Release 行 × N（蓝色故事卡片行，可折叠）
-                    for (final release in releases) ...[
-                      _ReleaseRow(
-                        release: release,
-                        columns: columns,
-                        collapsed: _collapsedReleases.contains(release),
-                        onToggle: () => _toggleRelease(release),
-                        onStoryMove: widget.onStoryMove,
-                        onStoryTap: widget.onStoryTap,
-                      ),
-                      const SizedBox(height: 8.0),
+              controller: _verticalController,
+              scrollDirection: Axis.vertical,
+              child: SingleChildScrollView(
+                controller: _horizontalController,
+                scrollDirection: Axis.horizontal,
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // 1. 活动层（橙色，跨列合并）
+                      _ActivityLayerRow(columns: columns),
+                      const SizedBox(height: _columnGap),
+                      // 2. 任务层（紫色）
+                      _TaskLayerRow(columns: columns),
+                      const SizedBox(height: 12.0),
+                      // 3. Release 行 × N（蓝色故事卡片行，可折叠）
+                      for (final release in releases) ...[
+                        _ReleaseRow(
+                          release: release,
+                          columns: columns,
+                          collapsed: _collapsedReleases.contains(release),
+                          onToggle: () => _toggleRelease(release),
+                          onStoryMove: widget.onStoryMove,
+                          onStoryTap: widget.onStoryTap,
+                        ),
+                        const SizedBox(height: 8.0),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
+          // 垂直滚动条（右侧，避开水平滚动条）
+          Positioned(
+            top: 4,
+            right: 4,
+            bottom: 14,
+            width: 8,
+            child: _OverlayScrollbar(
+              key: const Key('scrollbar-vertical'),
+              controller: _verticalController,
+              axis: Axis.vertical,
+            ),
+          ),
+          // 水平滚动条（底部，避开垂直滚动条）
+          Positioned(
+            left: 4,
+            right: 14,
+            bottom: 4,
+            height: 8,
+            child: _OverlayScrollbar(
+              key: const Key('scrollbar-horizontal'),
+              controller: _horizontalController,
+              axis: Axis.horizontal,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 叠加式滚动条：常显、可拖动，用于双层滚动矩阵的视口边缘
+class _OverlayScrollbar extends StatefulWidget {
+  final ScrollController controller;
+  final Axis axis;
+
+  const _OverlayScrollbar({
+    super.key,
+    required this.controller,
+    required this.axis,
+  });
+
+  @override
+  State<_OverlayScrollbar> createState() => _OverlayScrollbarState();
+}
+
+class _OverlayScrollbarState extends State<_OverlayScrollbar> {
+  double? _dragStartLocal;
+  double? _dragStartOffset;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.addListener(_onScrollChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(_onScrollChanged);
+    super.dispose();
+  }
+
+  void _onScrollChanged() {
+    if (mounted) setState(() {});
+  }
+
+  double _localOf(Offset local) =>
+      widget.axis == Axis.vertical ? local.dy : local.dx;
+
+  void _startDrag(DragStartDetails details) {
+    _dragStartLocal = _localOf(details.localPosition);
+    _dragStartOffset = widget.controller.offset;
+  }
+
+  void _updateDrag(DragUpdateDetails details, double track, double thumb) {
+    final startLocal = _dragStartLocal;
+    final startOffset = _dragStartOffset;
+    if (startLocal == null || startOffset == null) return;
+    final position = widget.controller.position;
+    final delta = _localOf(details.localPosition) - startLocal;
+    final newOffset = startOffset +
+        delta / (track - thumb) * position.maxScrollExtent;
+    widget.controller.jumpTo(
+      newOffset.clamp(0.0, position.maxScrollExtent),
+    );
+  }
+
+  void _endDrag(DragEndDetails details) {
+    _dragStartLocal = null;
+    _dragStartOffset = null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    const thumbMinSize = 24.0;
+    final controller = widget.controller;
+    if (!controller.hasClients) return const SizedBox.shrink();
+    final position = controller.position;
+    // 布局完成前 content dimensions 不可用，需保护（避免 maxScrollExtent 空检查崩溃）
+    if (!position.hasContentDimensions) return const SizedBox.shrink();
+    final maxExtent = position.maxScrollExtent;
+    if (maxExtent <= 0) return const SizedBox.shrink();
+
+    final viewport = position.viewportDimension;
+    final ratio = viewport / (viewport + maxExtent); // 拇指长度比例
+    final fraction = position.pixels / maxExtent; // 拇指位置比例
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final track =
+            widget.axis == Axis.vertical ? constraints.maxHeight : constraints.maxWidth;
+        final thumb = (track * ratio).clamp(thumbMinSize, track);
+        final thumbOffset = fraction * (track - thumb);
+
+        return GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onVerticalDragStart: widget.axis == Axis.vertical ? _startDrag : null,
+          onVerticalDragUpdate: widget.axis == Axis.vertical
+              ? (details) => _updateDrag(details, track, thumb)
+              : null,
+          onVerticalDragEnd: widget.axis == Axis.vertical ? _endDrag : null,
+          onHorizontalDragStart: widget.axis == Axis.horizontal ? _startDrag : null,
+          onHorizontalDragUpdate: widget.axis == Axis.horizontal
+              ? (details) => _updateDrag(details, track, thumb)
+              : null,
+          onHorizontalDragEnd: widget.axis == Axis.horizontal ? _endDrag : null,
+          child: Stack(
+            children: [
+              // 轨道（半透明，仅在可滚动时显示）
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.06),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ),
+              // 拇指
+              if (widget.axis == Axis.vertical)
+                Positioned(
+                  top: thumbOffset,
+                  left: 0,
+                  right: 0,
+                  height: thumb,
+                  child: _Thumb(),
+                )
+              else
+                Positioned(
+                  left: thumbOffset,
+                  top: 0,
+                  bottom: 0,
+                  width: thumb,
+                  child: _Thumb(),
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// 滚动条拇指
+class _Thumb extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.35),
+        borderRadius: BorderRadius.circular(4),
       ),
     );
   }
