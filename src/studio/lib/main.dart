@@ -131,9 +131,25 @@ class _ProductCloudPageState extends State<ProductCloudPage> {
                               color: const Color(0xFF2C3E50),
                             ),
                             const SizedBox(width: 8),
-                            Text(
-                              product.name,
-                              style: const TextStyle(fontSize: 13),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  product.title,
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                Text(
+                                  product.name,
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -149,7 +165,7 @@ class _ProductCloudPageState extends State<ProductCloudPage> {
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        _selectedProduct.name,
+                        _selectedProduct.title,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 14,
@@ -245,13 +261,22 @@ class _SpaceNav extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  product.name,
+                  product.title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     color: Colors.white70,
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
+                  ),
+                ),
+                Text(
+                  product.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Colors.white38,
+                    fontSize: 10,
                   ),
                 ),
               ],

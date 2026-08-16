@@ -34,6 +34,10 @@ void main() {
     expect(find.text('量潮产品云'), findsOneWidget);
     expect(find.byKey(const Key('product-switcher')), findsOneWidget);
 
+    // 前台展示产品标题，唯一命名（qtcloud-devops）仅作识别副标题
+    expect(find.text('量潮DevOps云'), findsWidgets);
+    expect(find.text('qtcloud-devops'), findsWidgets);
+
     // 产品空间侧边导航：需求 / 规格
     expect(find.byKey(const Key('nav-requirements')), findsOneWidget);
     expect(find.byKey(const Key('nav-specification')), findsOneWidget);
@@ -57,6 +61,9 @@ void main() {
 
     await tester.tap(find.byKey(const Key('product-switcher')));
     await tester.pumpAndSettle();
+    // 菜单项展示标题 + 唯一命名
+    expect(find.text('量潮编程云'), findsOneWidget);
+    expect(find.text('qtcloud-code'), findsOneWidget);
     await tester.tap(find.byKey(const Key('switch-qtcloud-product')));
     await tester.pumpAndSettle();
 

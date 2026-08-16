@@ -6,7 +6,13 @@ import 'story_map_models.dart';
 /// 一个可独立决策与交付的产品，包含其用户故事地图与设计思路。
 class Product {
   final String id;
+
+  /// 唯一命名（URL / 识别场景），如 qtcloud-devops
   final String name;
+
+  /// 前台展示标题，如 量潮DevOps云
+  final String title;
+
   final String tagline; // 一句话定位
   final String designIdea; // 设计思路
   final StoryMap storyMap;
@@ -14,6 +20,7 @@ class Product {
   const Product({
     required this.id,
     required this.name,
+    required this.title,
     required this.tagline,
     required this.designIdea,
     required this.storyMap,
@@ -38,6 +45,7 @@ class Product {
   Map<String, dynamic> toJson() => {
         'id': id,
         'name': name,
+        'title': title,
         'tagline': tagline,
         'designIdea': designIdea,
         'storyMap': storyMap.toJson(),
@@ -47,6 +55,7 @@ class Product {
     return Product(
       id: json['id'] as String,
       name: json['name'] as String,
+      title: json['title'] as String? ?? (json['name'] as String),
       tagline: json['tagline'] as String? ?? '',
       designIdea: json['designIdea'] as String? ?? '',
       storyMap: StoryMap.fromJson(json['storyMap'] as Map<String, dynamic>),
