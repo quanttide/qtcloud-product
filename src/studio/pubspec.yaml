@@ -1,5 +1,5 @@
 name: studio
-description: "QtCloud Studio - AI 协作平台用户故事地图编辑器"
+description: "量潮产品云 - 集中管理和可视化所有产品，支撑产品决策"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev

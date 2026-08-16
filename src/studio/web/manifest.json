@@ -1,11 +1,11 @@
 {
-    "name": "studio",
-    "short_name": "studio",
+    "name": "量潮产品云",
+    "short_name": "量潮产品云",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "集中管理和可视化所有产品，支撑产品决策。",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
