@@ -1,0 +1,187 @@
+{
+  "id": "qtcloud-code",
+  "name": "qtcloud-code",
+  "title": "量潮编程云",
+  "tagline": "3R 人机协作：规则引擎把关，人做决策",
+  "designIdea": "遵循高级程序员的工作范式：Review（规则引擎第一道扫描，快、确定、无遗漏）→ Reflect（根因追溯在人脑，工具提供 trace/graph/suggest 证据）→ Refactor（重构决策在人脑，工具执行 rename 等修改并支持 --dry-run 预览），以契约校验收口。",
+  "storyMap": {
+    "id": "map-code",
+    "name": "qtcloud-code",
+    "mvpLinePosition": 0.5,
+    "activities": [
+      {
+        "id": "code-review",
+        "title": "审查代码",
+        "order": 0,
+        "tasks": [
+          {
+            "id": "code-task-lint",
+            "title": "运行规则引擎",
+            "activityId": "code-review",
+            "order": 0,
+            "stories": [
+              {
+                "id": "code-story-1",
+                "title": "扫描多语言代码",
+                "taskId": "code-task-lint",
+                "phase": "mvp",
+                "status": "done",
+                "description": "5 语言解析：Rust / Python / Go / Dart / TS"
+              },
+              {
+                "id": "code-story-2",
+                "title": "发现代码问题",
+                "taskId": "code-task-lint",
+                "phase": "mvp",
+                "status": "done",
+                "description": "5 类检测器：过长函数 / unsafe / 过长参数 / 未使用变量 / 缺失测试"
+              }
+            ]
+          },
+          {
+            "id": "code-task-mode",
+            "title": "选择协作模式",
+            "activityId": "code-review",
+            "order": 1,
+            "stories": [
+              {
+                "id": "code-story-3",
+                "title": "仅规则引擎快速扫描",
+                "taskId": "code-task-mode",
+                "phase": "mvp",
+                "status": "done",
+                "description": "--mode lint，秒级"
+              },
+              {
+                "id": "code-story-4",
+                "title": "规则引擎 + AI 审查",
+                "taskId": "code-task-mode",
+                "phase": "mvp",
+                "status": "inProgress",
+                "description": "--mode llm，默认模式"
+              },
+              {
+                "id": "code-story-5",
+                "title": "AI 辅助自动修复",
+                "taskId": "code-task-mode",
+                "phase": "future",
+                "status": "todo",
+                "description": "--mode deep，需人工审核"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "code-reflect",
+        "title": "反思根因",
+        "order": 1,
+        "tasks": [
+          {
+            "id": "code-task-trace",
+            "title": "追溯调用链",
+            "activityId": "code-reflect",
+            "order": 0,
+            "stories": [
+              {
+                "id": "code-story-6",
+                "title": "追溯问题调用链",
+                "taskId": "code-task-trace",
+                "phase": "mvp",
+                "status": "inProgress",
+                "description": "reflect trace"
+              },
+              {
+                "id": "code-story-7",
+                "title": "提取代码切片",
+                "taskId": "code-task-trace",
+                "phase": "mvp",
+                "status": "todo",
+                "description": "reflect slice"
+              }
+            ]
+          },
+          {
+            "id": "code-task-graph",
+            "title": "生成依赖视图",
+            "activityId": "code-reflect",
+            "order": 1,
+            "stories": [
+              {
+                "id": "code-story-8",
+                "title": "生成依赖关系图",
+                "taskId": "code-task-graph",
+                "phase": "future",
+                "status": "todo",
+                "description": "reflect graph"
+              },
+              {
+                "id": "code-story-9",
+                "title": "获取修改建议",
+                "taskId": "code-task-graph",
+                "phase": "future",
+                "status": "todo",
+                "description": "reflect suggest"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "code-refactor",
+        "title": "执行重构",
+        "order": 2,
+        "tasks": [
+          {
+            "id": "code-task-rename",
+            "title": "重命名符号",
+            "activityId": "code-refactor",
+            "order": 0,
+            "stories": [
+              {
+                "id": "code-story-10",
+                "title": "安全重命名符号",
+                "taskId": "code-task-rename",
+                "phase": "mvp",
+                "status": "inProgress",
+                "description": "refactor rename，符号表分析"
+              },
+              {
+                "id": "code-story-11",
+                "title": "预览重构改动",
+                "taskId": "code-task-rename",
+                "phase": "mvp",
+                "status": "todo",
+                "description": "--dry-run 预览写入"
+              },
+              {
+                "id": "code-story-12",
+                "title": "写入重构结果",
+                "taskId": "code-task-rename",
+                "phase": "future",
+                "status": "todo",
+                "description": "实际文件写入"
+              }
+            ]
+          },
+          {
+            "id": "code-task-contract",
+            "title": "校验契约",
+            "activityId": "code-refactor",
+            "order": 1,
+            "stories": [
+              {
+                "id": "code-story-13",
+                "title": "校验代码契约",
+                "taskId": "code-task-contract",
+                "phase": "future",
+                "status": "todo",
+                "description": "contract init / list / validate"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,179 @@
+{
+  "id": "qtcloud-product",
+  "name": "qtcloud-product",
+  "title": "量潮产品云",
+  "tagline": "集中管理和可视化所有产品，支撑产品决策",
+  "designIdea": "以用户故事地图（用户活动 → 用户任务 → 用户故事）显式化单产品结构，以 MVP 发布线划定版本边界；产品越来越多、决策越来越难，向上生长出产品组合视图：产品目录、跨产品可视化与可追溯的决策记录。",
+  "storyMap": {
+    "id": "map-product",
+    "name": "qtcloud-product",
+    "mvpLinePosition": 0.4,
+    "activities": [
+      {
+        "id": "product-stories",
+        "title": "管理用户故事",
+        "order": 0,
+        "tasks": [
+          {
+            "id": "product-task-map",
+            "title": "维护故事地图",
+            "activityId": "product-stories",
+            "order": 0,
+            "stories": [
+              {
+                "id": "product-story-1",
+                "title": "建立产品全景骨架",
+                "taskId": "product-task-map",
+                "phase": "mvp",
+                "status": "done",
+                "description": "用户活动分组（UserActivity）"
+              },
+              {
+                "id": "product-story-2",
+                "title": "拆解任务与故事",
+                "taskId": "product-task-map",
+                "phase": "mvp",
+                "status": "done",
+                "description": "用户任务 → 用户故事"
+              }
+            ]
+          },
+          {
+            "id": "product-task-story",
+            "title": "细化用户故事",
+            "activityId": "product-stories",
+            "order": 1,
+            "stories": [
+              {
+                "id": "product-story-3",
+                "title": "编辑用户故事",
+                "taskId": "product-task-story",
+                "phase": "mvp",
+                "status": "inProgress",
+                "description": "3C 或验收标准两种格式"
+              },
+              {
+                "id": "product-story-4",
+                "title": "对比两种故事格式",
+                "taskId": "product-task-story",
+                "phase": "mvp",
+                "status": "inProgress",
+                "description": "对话式 vs 富文本式"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "product-roadmap",
+        "title": "制定版本计划",
+        "order": 1,
+        "tasks": [
+          {
+            "id": "product-task-mvp",
+            "title": "划定 MVP 边界",
+            "activityId": "product-roadmap",
+            "order": 0,
+            "stories": [
+              {
+                "id": "product-story-5",
+                "title": "拖动发布线划定版本范围",
+                "taskId": "product-task-mvp",
+                "phase": "mvp",
+                "status": "inProgress",
+                "description": "MVP 发布线（Release Line）"
+              },
+              {
+                "id": "product-story-6",
+                "title": "区分 MVP 与未来迭代",
+                "taskId": "product-task-mvp",
+                "phase": "mvp",
+                "status": "inProgress",
+                "description": "版本边界清晰可见"
+              }
+            ]
+          },
+          {
+            "id": "product-task-version",
+            "title": "对齐版本节奏",
+            "activityId": "product-roadmap",
+            "order": 1,
+            "stories": [
+              {
+                "id": "product-story-7",
+                "title": "对齐各产品版本节奏",
+                "taskId": "product-task-version",
+                "phase": "future",
+                "status": "todo",
+                "description": "版本计划关联路线图"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "product-portfolio",
+        "title": "管理产品组合",
+        "order": 2,
+        "tasks": [
+          {
+            "id": "product-task-catalog",
+            "title": "登记产品目录",
+            "activityId": "product-portfolio",
+            "order": 0,
+            "stories": [
+              {
+                "id": "product-story-8",
+                "title": "登记产品与负责人",
+                "taskId": "product-task-catalog",
+                "phase": "future",
+                "status": "todo",
+                "description": "产品状态可追踪"
+              },
+              {
+                "id": "product-story-9",
+                "title": "接入第一批实验对象",
+                "taskId": "product-task-catalog",
+                "phase": "future",
+                "status": "todo",
+                "description": "qtcloud-devops / qtcloud-product / qtcloud-code"
+              }
+            ]
+          },
+          {
+            "id": "product-task-portfolio",
+            "title": "查看组合视图",
+            "activityId": "product-portfolio",
+            "order": 1,
+            "stories": [
+              {
+                "id": "product-story-10",
+                "title": "跨产品可视化对比",
+                "taskId": "product-task-portfolio",
+                "phase": "future",
+                "status": "todo",
+                "description": "成熟度、投入、版本时间线"
+              }
+            ]
+          },
+          {
+            "id": "product-task-decision",
+            "title": "记录决策",
+            "activityId": "product-portfolio",
+            "order": 2,
+            "stories": [
+              {
+                "id": "product-story-11",
+                "title": "记录产品决策",
+                "taskId": "product-task-decision",
+                "phase": "future",
+                "status": "todo",
+                "description": "决策关联产品与依据，可追溯"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
