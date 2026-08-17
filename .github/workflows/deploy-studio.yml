@@ -51,6 +51,28 @@ jobs:
           flutter pub get
           flutter build web --release
 
+      # 禁用 Service Worker（内部工具部署）：SW 的 cacheFirst 策略会让浏览器长期
+      # 缓存固定路径的种子数据 JSON（assets/data/...），发布后用户硬刷新也拿不到新数据。
+      # 做法：产物 index.html 注入禁用补丁 + 删除 SW 脚本（与本地预览一致）。
+      - name: Disable Service Worker
+        working-directory: src/studio
+        run: |
+          python3 - <<'EOF'
+          p = 'build/web/index.html'
+          s = open(p).read()
+          patch = '''  <!-- 内部工具部署：禁用 Service Worker，避免缓存旧数据 -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register = function () { return Promise.resolve(null); };
+    }
+  </script>
+'''
+          if 'serviceWorker.register = function' not in s:
+              s = s.replace('<base href="/">', '<base href="/">\n' + patch)
+              open(p, 'w').write(s)
+          EOF
+          rm -f build/web/flutter_service_worker.js
+
       - name: Setup ossutil
         uses: manyuanrong/setup-ossutil@v3.0
         with:
@@ -59,15 +81,16 @@ jobs:
           access-key-secret: ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }}
 
       # 缓存策略分离（Flutter Web 部署要点）：
-      # - 入口文件（index.html / bootstrap / service worker / manifest）必须 no-cache，
+      # - 入口文件（index.html / bootstrap / manifest）必须 no-cache，
       #   否则浏览器与 SW 缓存旧入口，发布后用户永远看到旧版本
       # - 其余产物（main.dart.js / assets 哈希文件）可长缓存
+      # - flutter_service_worker.js 已在上一步删除（SW 已禁用）
       - name: Upload to OSS（产物长缓存）
         run: ossutil cp src/studio/build/web/ oss://${{ env.OSS_BUCKET }}/ -r -f --meta=Cache-Control:public,max-age=31536000
 
       - name: Upload to OSS（入口文件 no-cache）
         run: |
-          for f in index.html flutter_bootstrap.js flutter_service_worker.js manifest.json favicon.png; do
+          for f in index.html flutter_bootstrap.js manifest.json favicon.png; do
             ossutil cp "src/studio/build/web/$f" "oss://${{ env.OSS_BUCKET }}/$f" -f --meta=Cache-Control:no-cache
           done
 
