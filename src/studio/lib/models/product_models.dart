@@ -15,28 +15,39 @@ class Product {
 
   final String tagline; // 一句话定位
   final String designIdea; // 设计思路
-  final StoryMap storyMap;
+  final StoryMap storyMap; // 保留旧格式兼容
+  
+  // 缓存转换后的Story列表
+  late final List<Story> _stories;
+  late final StoryRepository _repository;
 
-  const Product({
+  Product({
     required this.id,
     required this.name,
     required this.title,
     required this.tagline,
     required this.designIdea,
     required this.storyMap,
-  });
+  }) {
+    // 从旧的StoryMap转换为新的Story列表
+    _stories = LegacyConverter.fromLegacyStoryMap({
+      'storyMap': storyMap.toJson(),
+    });
+    _repository = StoryRepository(_stories);
+  }
+
+  /// 获取Story仓库（新模型）
+  StoryRepository get repository => _repository;
+
+  /// 获取所有Story（新模型）
+  List<Story> get stories => List.unmodifiable(_stories);
 
   /// 用户故事总数（跨活动统计）
-  int get totalStories => storyMap.activities
-      .expand((activity) => activity.tasks)
-      .expand((task) => task.stories)
-      .length;
+  int get totalStories => _stories.where((s) => s.isStory).length;
 
   /// MVP 版本的用户故事数
-  int get mvpStories => storyMap.activities
-      .expand((activity) => activity.tasks)
-      .expand((task) => task.stories)
-      .where((story) => story.phase == ReleasePhase.mvp)
+  int get mvpStories => _stories
+      .where((s) => s.isStory && s.phase == ReleasePhase.mvp)
       .length;
 
   @override

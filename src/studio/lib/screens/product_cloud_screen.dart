@@ -175,7 +175,7 @@ class _ProductCloudScreenState extends State<ProductCloudScreen> {
                 Expanded(
                   child: switch (_selectedModule) {
                     ProductModule.requirements => RequirementScreen(
-                        mapData: _selectedProduct.storyMap,
+                        stories: _selectedProduct.stories,
                       ),
                     ProductModule.specification =>
                       const SpecificationScreen(),

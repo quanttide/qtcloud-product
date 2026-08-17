@@ -20,7 +20,7 @@ class ColumnDef {
   final String taskId;
 
   /// 故事列表，Key 为 Release 行（如 'MVP 版本' / '未来迭代'）
-  final Map<String, List<UserStory>> stories;
+  final Map<String, List<Story>> stories;
 
   const ColumnDef({
     this.flex = 1,
@@ -31,12 +31,17 @@ class ColumnDef {
   });
 }
 
-/// 将领域模型（StoryMap）投影为列驱动视图模型。
+/// 将领域模型（Story列表）投影为列驱动视图模型。
 /// 领域模型仍是唯一事实源，页面渲染前投影，不做任何数据变更。
-List<ColumnDef> projectToColumns(StoryMap map) {
-  final tasks = <({String activity, UserTask task})>[];
-  for (final activity in map.activities) {
-    for (final task in activity.tasks) {
+List<ColumnDef> projectToColumns(List<Story> stories) {
+  final repo = StoryRepository(stories);
+  final activities = repo.activities;
+  
+  // 收集所有任务，并关联其所属活动
+  final tasks = <({String activity, Story task})>[];
+  for (final activity in activities) {
+    final activityTasks = repo.getTasksForActivity(activity.id);
+    for (final task in activityTasks) {
       tasks.add((activity: activity.title, task: task));
     }
   }
@@ -49,13 +54,17 @@ List<ColumnDef> projectToColumns(StoryMap map) {
         tasks[i + span].activity == tasks[i].activity) {
       span++;
     }
+    
+    // 获取该任务下的所有故事
+    final taskStories = repo.getStoriesForTask(tasks[i].task.id);
+    
     columns.add(
       ColumnDef(
         flex: span,
         activityTitle: tasks[i].activity,
         taskTitle: tasks[i].task.title,
         taskId: tasks[i].task.id,
-        stories: _groupStoriesByPhase(tasks[i].task.stories),
+        stories: _groupStoriesByPhase(taskStories),
       ),
     );
   }
@@ -74,8 +83,8 @@ List<String> collectReleases(List<ColumnDef> columns) {
 }
 
 /// 按发布阶段（Release 行）分组故事
-Map<String, List<UserStory>> _groupStoriesByPhase(List<UserStory> stories) {
-  final grouped = <String, List<UserStory>>{};
+Map<String, List<Story>> _groupStoriesByPhase(List<Story> stories) {
+  final grouped = <String, List<Story>>{};
   for (final story in stories) {
     grouped.putIfAbsent(story.phase.label, () => []).add(story);
   }

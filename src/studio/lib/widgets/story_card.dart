@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import '../models/story_map_models.dart';
 
 /// 故事明细卡
-/// 代表一个 UserStory 的最小视觉单元
+/// 代表一个 Story 的最小视觉单元
 ///
 /// 精简约定：卡片只展示用户故事标题，不做其他信息展示
 /// （描述、发布阶段、状态等数据保留在模型中，由 CLI 加工、其他视图使用）。
 class StoryCard extends StatelessWidget {
-  final UserStory story;
+  final Story story;
   final VoidCallback? onTap;
-  final Function(UserStory)? onLongPress;
+  final Function(Story)? onLongPress;
 
   const StoryCard({
     super.key,

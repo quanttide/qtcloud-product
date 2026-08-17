@@ -13,13 +13,13 @@ double _cellWidth(int span) => span * (_columnWidth + _columnGap) - _columnGap;
 /// 故事地图画布页（独立页面，含 AppBar）
 /// 供独立路由使用；嵌入产品空间时请直接使用 [StoryMapCanvasView]。
 class StoryMapCanvasPage extends StatelessWidget {
-  final List<Story> stories;
-  final Function(Story, String)? onStoryMove;
-  final Function(Story)? onStoryTap;
+  final StoryMap mapData;
+  final Function(UserStory, String)? onStoryMove;
+  final Function(UserStory)? onStoryTap;
 
   const StoryMapCanvasPage({
     super.key,
-    required this.stories,
+    required this.mapData,
     this.onStoryMove,
     this.onStoryTap,
   });
@@ -28,12 +28,12 @@ class StoryMapCanvasPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('量潮产品云 · 用户故事地图'),
+        title: Text('量潮产品云 · ${mapData.name}'),
         backgroundColor: const Color(0xFF2C3E50),
         elevation: 0,
       ),
       body: StoryMapCanvasView(
-        stories: stories,
+        mapData: mapData,
         onStoryMove: onStoryMove,
         onStoryTap: onStoryTap,
       ),
@@ -48,13 +48,13 @@ class StoryMapCanvasPage extends StatelessWidget {
 /// - Y 轴（行）：Release 版本行（如 'MVP 版本' / '未来迭代'），可折叠
 /// - 领域模型经 [projectToColumns] 投影为列驱动结构渲染
 class StoryMapCanvasView extends StatefulWidget {
-  final List<Story> stories;
-  final Function(Story, String)? onStoryMove;
-  final Function(Story)? onStoryTap;
+  final StoryMap mapData;
+  final Function(UserStory, String)? onStoryMove;
+  final Function(UserStory)? onStoryTap;
 
   const StoryMapCanvasView({
     super.key,
-    required this.stories,
+    required this.mapData,
     this.onStoryMove,
     this.onStoryTap,
   });
@@ -81,8 +81,7 @@ class _StoryMapCanvasViewState extends State<StoryMapCanvasView> {
   @override
   void didUpdateWidget(StoryMapCanvasView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // 如果故事列表变化，清空折叠状态
-    if (widget.stories != oldWidget.stories) {
+    if (widget.mapData.id != oldWidget.mapData.id) {
       _collapsedReleases.clear();
     }
   }
@@ -97,7 +96,7 @@ class _StoryMapCanvasViewState extends State<StoryMapCanvasView> {
 
   @override
   Widget build(BuildContext context) {
-    final columns = projectToColumns(widget.stories);
+    final columns = projectToColumns(widget.mapData);
     final releases = collectReleases(columns);
 
     return Container(
@@ -405,8 +404,8 @@ class _ReleaseRow extends StatelessWidget {
   final List<ColumnDef> columns;
   final bool collapsed;
   final VoidCallback onToggle;
-  final Function(Story, String)? onStoryMove;
-  final Function(Story)? onStoryTap;
+  final Function(UserStory, String)? onStoryMove;
+  final Function(UserStory)? onStoryTap;
 
   const _ReleaseRow({
     required this.release,
@@ -475,8 +474,8 @@ class _ReleaseRow extends StatelessWidget {
 class _StoryCell extends StatelessWidget {
   final ColumnDef column;
   final String release;
-  final Function(Story, String)? onStoryMove;
-  final Function(Story)? onStoryTap;
+  final Function(UserStory, String)? onStoryMove;
+  final Function(UserStory)? onStoryTap;
 
   const _StoryCell({
     required this.column,
@@ -487,18 +486,16 @@ class _StoryCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final stories = column.stories[release] ?? const <Story>[];
+    final stories = column.stories[release] ?? const <UserStory>[];
 
     return Container(
       width: _columnWidth,
       margin: const EdgeInsets.only(right: _columnGap),
-      child: DragTarget<Story>(
-        onAcceptWithDetails: (DragTargetDetails<Story> details) {
+      child: DragTarget<UserStory>(
+        onAcceptWithDetails: (DragTargetDetails<UserStory> details) {
           final story = details.data;
           // 如果故事属于不同的任务，触发 onStoryMove
-          // 注意：Story模型没有taskId字段，需要通过parentId判断
-          // 这里简化处理，假设story.parentId是任务ID
-          if (story.parentId != column.taskId) {
+          if (story.taskId != column.taskId) {
             onStoryMove?.call(story, column.taskId);
           }
         },
@@ -519,7 +516,7 @@ class _StoryCell extends StatelessWidget {
             child: Column(
               children: [
                 ...stories.map((story) {
-                  return LongPressDraggable<Story>(
+                  return LongPressDraggable<UserStory>(
                     data: story,
                     feedback: Material(
                       elevation: 5.0,
