@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.0-alpha.6] - 2026-08-17
+
+### Fixed
+
+- 修正 phase 枚举值：将 next 和 research 改为 future。
+- 修正 CHANGELOG 格式（Keep a Changelog 标准）。
+
+### Changed
+
+- 严格遵循 requirement.md 更新 qtcloud-product 需求故事地图：添加梳理产品需求和评审产品需求任务及故事点。
+- 更新 qtcloud-product 需求故事地图：添加 AI 生成、反馈、颗粒度检查和编辑故事点。
+
 ## [0.1.0-alpha.5] - 2026-08-17
 
 ### Added
