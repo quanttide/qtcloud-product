@@ -40,7 +40,7 @@
           },
           {
             "id": "task-storymap",
-            "title": "刻画需求",
+            "title": "梳理产品需求",
             "activityId": "activity-planning",
             "order": 1,
             "stories": [
@@ -96,7 +96,7 @@
                 "id": "story-map-ai-generate",
                 "title": "AI 生成初始故事地图草稿",
                 "taskId": "task-storymap",
-                "phase": "next",
+                "phase": "mvp",
                 "status": "todo",
                 "description": "作为产品策划，我想要把已有素材（如访谈记录、需求文档、功能清单）交给 AI，生成一份初始的用户故事地图草稿，以便我能快速获得一个结构化的起点，减少从零梳理的时间，把精力集中在调整和确认上。"
               },
@@ -104,7 +104,7 @@
                 "id": "story-map-ai-feedback",
                 "title": "标记 AI 输出并反馈",
                 "taskId": "task-storymap",
-                "phase": "next",
+                "phase": "mvp",
                 "status": "todo",
                 "description": "用户要能标记 AI 输出中不符合用户视角的内容，并让 AI 基于反馈重新生成"
               },
@@ -112,15 +112,39 @@
                 "id": "story-map-granularity",
                 "title": "检查故事卡片颗粒度",
                 "taskId": "task-storymap",
-                "phase": "next",
+                "phase": "mvp",
                 "status": "todo",
                 "description": "用户要检查故事卡片的颗粒度是否一致，合并过细或过粗的卡片"
+              }
+            ]
+          },
+          {
+            "id": "task-review-requirement",
+            "title": "评审产品需求",
+            "activityId": "activity-planning",
+            "order": 2,
+            "stories": [
+              {
+                "id": "story-review-canvas",
+                "title": "用户故事地图画布",
+                "taskId": "task-review-requirement",
+                "phase": "mvp",
+                "status": "inProgress",
+                "description": "用户要在一块画布上看到用户故事地图的三层结构（活动/任务/故事卡）"
               },
               {
-                "id": "story-map-edit",
+                "id": "story-review-drag",
+                "title": "故事卡片拖拽",
+                "taskId": "task-review-requirement",
+                "phase": "mvp",
+                "status": "inProgress",
+                "description": "用户要拖拽故事卡片，重新组织地图结构"
+              },
+              {
+                "id": "story-review-edit",
                 "title": "编辑合并拆分故事卡片",
-                "taskId": "task-storymap",
-                "phase": "next",
+                "taskId": "task-review-requirement",
+                "phase": "mvp",
                 "status": "todo",
                 "description": "用户要能编辑、合并、拆分 AI 生成的故事卡片，把草稿调整成自己的地图"
               }
@@ -130,7 +154,7 @@
             "id": "task-portfolio-decision",
             "title": "组合决策",
             "activityId": "activity-planning",
-            "order": 2,
+            "order": 3,
             "stories": [
               {
                 "id": "story-portfolio-view",
