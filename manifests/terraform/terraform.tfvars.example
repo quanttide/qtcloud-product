@@ -2,3 +2,5 @@
 region               = "cn-hangzhou"
 environment          = "prod"
 # oss_bucket_name    = "qtcloud-product-studio"   # 默认即可；OSS 全局唯一，跨环境需自行区分
+# data_bucket_name   = "qtcloud-product-data"     # 产品数据桶（provider 数据源），默认即可
+image                = "<ACR实例公网地址，控制台可见，勿入库>/quanttide/qtcloud-product:latest"
