@@ -91,6 +91,38 @@
                 "phase": "next",
                 "status": "todo",
                 "description": "拖动 MVP 发布线（水平红线），标记当前版本与未来迭代的边界"
+              },
+              {
+                "id": "story-map-ai-generate",
+                "title": "AI 生成初始故事地图草稿",
+                "taskId": "task-storymap",
+                "phase": "next",
+                "status": "todo",
+                "description": "作为产品策划，我想要把已有素材（如访谈记录、需求文档、功能清单）交给 AI，生成一份初始的用户故事地图草稿，以便我能快速获得一个结构化的起点，减少从零梳理的时间，把精力集中在调整和确认上。"
+              },
+              {
+                "id": "story-map-ai-feedback",
+                "title": "标记 AI 输出并反馈",
+                "taskId": "task-storymap",
+                "phase": "next",
+                "status": "todo",
+                "description": "用户要能标记 AI 输出中不符合用户视角的内容，并让 AI 基于反馈重新生成"
+              },
+              {
+                "id": "story-map-granularity",
+                "title": "检查故事卡片颗粒度",
+                "taskId": "task-storymap",
+                "phase": "next",
+                "status": "todo",
+                "description": "用户要检查故事卡片的颗粒度是否一致，合并过细或过粗的卡片"
+              },
+              {
+                "id": "story-map-edit",
+                "title": "编辑合并拆分故事卡片",
+                "taskId": "task-storymap",
+                "phase": "next",
+                "status": "todo",
+                "description": "用户要能编辑、合并、拆分 AI 生成的故事卡片，把草稿调整成自己的地图"
               }
             ]
           },
