@@ -60,9 +60,12 @@ jobs:
           python3 - <<'EOF'
           p = 'build/web/index.html'
           s = open(p).read()
-          patch = '''  <!-- 内部工具部署：禁用 Service Worker，避免缓存旧数据 -->
+          patch = '''  <!-- 内部工具部署：卸载旧 Service Worker 并禁止新注册，避免缓存旧数据 -->
           <script>
             if ('serviceWorker' in navigator) {
+              navigator.serviceWorker.getRegistrations().then(function (regs) {
+                regs.forEach(function (reg) { reg.unregister(); });
+              });
               navigator.serviceWorker.register = function () { return Promise.resolve(null); };
             }
           </script>
