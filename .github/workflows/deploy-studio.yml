@@ -61,12 +61,12 @@ jobs:
           p = 'build/web/index.html'
           s = open(p).read()
           patch = '''  <!-- 内部工具部署：禁用 Service Worker，避免缓存旧数据 -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register = function () { return Promise.resolve(null); };
-    }
-  </script>
-'''
+          <script>
+            if ('serviceWorker' in navigator) {
+              navigator.serviceWorker.register = function () { return Promise.resolve(null); };
+            }
+          </script>
+          '''
           if 'serviceWorker.register = function' not in s:
               s = s.replace('<base href="/">', '<base href="/">\n' + patch)
               open(p, 'w').write(s)
