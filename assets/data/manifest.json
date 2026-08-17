@@ -2,6 +2,9 @@
   "products": [
     "qtcloud-devops",
     "qtcloud-product",
-    "qtcloud-code"
+    "qtcloud-code",
+    "qtcloud",
+    "qtcloud-secret",
+    "qthealth"
   ]
 }
