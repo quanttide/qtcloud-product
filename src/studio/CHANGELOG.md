@@ -1,5 +1,20 @@
 # Changelog
 
+
+## [0.1.0-alpha.5] - 2026-08-17
+
+### Added
+- 为 qtcloud、qtcloud-secret 和 qthealth 新增种子数据  
+- 新增产品数据只读 Provider  
+- 新增 provider 部署流水线  
+- 新增产品数据桶及函数计算容器应用的基础设施配置
+
+### Changed
+- 重构 qtcloud-product 用户故事地图，更新产品定位与设计思想  
+- 将种子数据迁移至 src/studio/assets/data 真实目录，并更新组件测试使用内置夹具，使其与种子数据解耦
+
+### Removed
+- 移除遗留的旧 assets 数据目录
 ## [0.1.0-alpha.4] - 2026-08-16
 
 ### 代码
