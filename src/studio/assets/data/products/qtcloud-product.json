@@ -11,7 +11,7 @@
     "activities": [
       {
         "id": "activity-planning",
-        "title": "产品策划",
+        "title": "需求",
         "order": 0,
         "tasks": [
           {
@@ -44,54 +44,6 @@
             "activityId": "activity-planning",
             "order": 1,
             "stories": [
-              {
-                "id": "story-map-view",
-                "title": "用户故事地图画布",
-                "taskId": "task-storymap",
-                "phase": "mvp",
-                "status": "inProgress",
-                "description": "在一块画布上看到用户故事地图的三层结构（活动层 / 任务层 / 故事卡），让所有人看到同一张产品地图"
-              },
-              {
-                "id": "story-map-activity-span",
-                "title": "活动跨列合并显示",
-                "taskId": "task-storymap",
-                "phase": "mvp",
-                "status": "inProgress",
-                "description": "活动跨列合并显示（一个活动横跨多个任务列），表达活动的真实跨度"
-              },
-              {
-                "id": "story-map-scroll",
-                "title": "双轴滚动浏览",
-                "taskId": "task-storymap",
-                "phase": "mvp",
-                "status": "inProgress",
-                "description": "横向、纵向双轴滚动浏览整张地图，在大量故事中定位"
-              },
-              {
-                "id": "story-map-release-fold",
-                "title": "版本行折叠",
-                "taskId": "task-storymap",
-                "phase": "mvp",
-                "status": "inProgress",
-                "description": "故事按 Release 版本行组织且行可折叠，聚焦某个发布版本的范围"
-              },
-              {
-                "id": "story-map-drag",
-                "title": "故事卡片拖拽",
-                "taskId": "task-storymap",
-                "phase": "mvp",
-                "status": "inProgress",
-                "description": "长按拖拽故事卡片、在任务列间重新组织，调整地图结构"
-              },
-              {
-                "id": "story-map-mvp-line",
-                "title": "MVP 发布线",
-                "taskId": "task-storymap",
-                "phase": "next",
-                "status": "todo",
-                "description": "拖动 MVP 发布线（水平红线），标记当前版本与未来迭代的边界"
-              },
               {
                 "id": "story-map-ai-generate",
                 "title": "AI 生成初始故事地图草稿",
@@ -149,30 +101,6 @@
                 "description": "用户要能编辑、合并、拆分 AI 生成的故事卡片，把草稿调整成自己的地图"
               }
             ]
-          },
-          {
-            "id": "task-portfolio-decision",
-            "title": "组合决策",
-            "activityId": "activity-planning",
-            "order": 3,
-            "stories": [
-              {
-                "id": "story-portfolio-view",
-                "title": "产品组合视图",
-                "taskId": "task-portfolio-decision",
-                "phase": "next",
-                "status": "todo",
-                "description": "查看跨产品的组合视图（成熟度、投入分布、版本时间线），做产品取舍与资源分配"
-              },
-              {
-                "id": "story-portfolio-relation",
-                "title": "产品关系管理",
-                "taskId": "task-portfolio-decision",
-                "phase": "next",
-                "status": "todo",
-                "description": "管理产品之间的关系（跨系统边界的关系优先于产品内部知识），支撑产品体系的整体决策"
-              }
-            ]
           }
         ]
       },
@@ -191,7 +119,7 @@
                 "id": "story-event-storm",
                 "title": "事件风暴梳理规格",
                 "taskId": "task-event-storm",
-                "phase": "next",
+                "phase": "future",
                 "status": "todo",
                 "description": "以事件风暴梳理产品规格（领域事件、业务规则），准确描述产品行为"
               }
@@ -201,7 +129,7 @@
       },
       {
         "id": "activity-qa",
-        "title": "QA 验收",
+        "title": "验收",
         "order": 2,
         "tasks": [
           {
@@ -230,7 +158,7 @@
                 "id": "story-agile-qa",
                 "title": "敏捷验收方法",
                 "taskId": "task-agile-qa",
-                "phase": "research",
+                "phase": "future",
                 "status": "todo",
                 "description": "找到比用例更敏捷的成体系验收方法，跟上敏捷节奏"
               }
@@ -240,7 +168,7 @@
       },
       {
         "id": "activity-operations",
-        "title": "产品运营",
+        "title": "运营",
         "order": 3,
         "tasks": [
           {
@@ -253,7 +181,7 @@
                 "id": "story-data-collection",
                 "title": "收集运营数据",
                 "taskId": "task-data-collection",
-                "phase": "next",
+                "phase": "future",
                 "status": "todo",
                 "description": "收集实际运营数据（包括各类观测数据），持续检验产品"
               }
@@ -269,7 +197,7 @@
                 "id": "story-data-driven",
                 "title": "数据驱动产品结构",
                 "taskId": "task-data-driven",
-                "phase": "next",
+                "phase": "future",
                 "status": "todo",
                 "description": "通过不断填入有用数据发现合适的产品管理结构，让产品体系在真实使用中自然生长"
               }
