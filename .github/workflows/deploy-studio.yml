@@ -90,7 +90,7 @@ jobs:
 
       - name: Upload to OSS（入口文件 no-cache）
         run: |
-          for f in index.html flutter_bootstrap.js manifest.json favicon.png; do
+          for f in index.html flutter_bootstrap.js manifest.json favicon.png version.json; do
             ossutil cp "src/studio/build/web/$f" "oss://${{ env.OSS_BUCKET }}/$f" -f --meta=Cache-Control:no-cache
           done
 
