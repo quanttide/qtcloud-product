@@ -2,173 +2,220 @@
   "id": "qtcloud-product",
   "name": "qtcloud-product",
   "title": "量潮产品云",
-  "tagline": "集中管理和可视化所有产品，支撑产品决策",
-  "designIdea": "以用户故事地图（用户活动 → 用户任务 → 用户故事）显式化单产品结构，以 MVP 发布线划定版本边界；产品越来越多、决策越来越难，向上生长出产品组合视图：产品目录、跨产品可视化与可追溯的决策记录。",
+  "tagline": "量潮云的核心后台，以产品形态提供服务",
+  "designIdea": "产品的核心目标不是做好某一个产品，而是构建整个产品体系。体系需要一个元结构来管理产品的结构——尤其是跨系统边界时，我们更关心产品与产品之间的关系，而不是某个产品内部的领域知识。一旦思考进入产品内部的结构关系，就应当回到产品体系中来管理。",
   "storyMap": {
     "id": "map-product",
     "name": "qtcloud-product",
     "mvpLinePosition": 0.4,
     "activities": [
       {
-        "id": "product-stories",
-        "title": "管理用户故事",
+        "id": "activity-planning",
+        "title": "产品策划",
         "order": 0,
         "tasks": [
           {
-            "id": "product-task-map",
-            "title": "维护故事地图",
-            "activityId": "product-stories",
+            "id": "task-catalog",
+            "title": "管理产品清单",
+            "activityId": "activity-planning",
             "order": 0,
             "stories": [
               {
-                "id": "product-story-1",
-                "title": "建立产品全景骨架",
-                "taskId": "product-task-map",
-                "phase": "mvp",
-                "status": "done",
-                "description": "用户活动分组（UserActivity）"
-              },
-              {
-                "id": "product-story-2",
-                "title": "拆解任务与故事",
-                "taskId": "product-task-map",
-                "phase": "mvp",
-                "status": "done",
-                "description": "用户任务 → 用户故事"
-              }
-            ]
-          },
-          {
-            "id": "product-task-story",
-            "title": "细化用户故事",
-            "activityId": "product-stories",
-            "order": 1,
-            "stories": [
-              {
-                "id": "product-story-3",
-                "title": "编辑用户故事",
-                "taskId": "product-task-story",
-                "phase": "mvp",
-                "status": "inProgress",
-                "description": "3C 或验收标准两种格式"
-              },
-              {
-                "id": "product-story-4",
-                "title": "对比两种故事格式",
-                "taskId": "product-task-story",
-                "phase": "mvp",
-                "status": "inProgress",
-                "description": "对话式 vs 富文本式"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "id": "product-roadmap",
-        "title": "制定版本计划",
-        "order": 1,
-        "tasks": [
-          {
-            "id": "product-task-mvp",
-            "title": "划定 MVP 边界",
-            "activityId": "product-roadmap",
-            "order": 0,
-            "stories": [
-              {
-                "id": "product-story-5",
-                "title": "拖动发布线划定版本范围",
-                "taskId": "product-task-mvp",
-                "phase": "mvp",
-                "status": "inProgress",
-                "description": "MVP 发布线（Release Line）"
-              },
-              {
-                "id": "product-story-6",
-                "title": "区分 MVP 与未来迭代",
-                "taskId": "product-task-mvp",
-                "phase": "mvp",
-                "status": "inProgress",
-                "description": "版本边界清晰可见"
-              }
-            ]
-          },
-          {
-            "id": "product-task-version",
-            "title": "对齐版本节奏",
-            "activityId": "product-roadmap",
-            "order": 1,
-            "stories": [
-              {
-                "id": "product-story-7",
-                "title": "对齐各产品版本节奏",
-                "taskId": "product-task-version",
-                "phase": "future",
-                "status": "todo",
-                "description": "版本计划关联路线图"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "id": "product-portfolio",
-        "title": "管理产品组合",
-        "order": 2,
-        "tasks": [
-          {
-            "id": "product-task-catalog",
-            "title": "登记产品目录",
-            "activityId": "product-portfolio",
-            "order": 0,
-            "stories": [
-              {
-                "id": "product-story-8",
+                "id": "story-catalog-register",
                 "title": "登记产品与负责人",
-                "taskId": "product-task-catalog",
-                "phase": "future",
-                "status": "todo",
-                "description": "产品状态可追踪"
+                "taskId": "task-catalog",
+                "phase": "mvp",
+                "status": "done",
+                "description": "登记每个产品（名称、状态、负责人），形成完整的产品清单"
               },
               {
-                "id": "product-story-9",
-                "title": "接入第一批实验对象",
-                "taskId": "product-task-catalog",
-                "phase": "future",
-                "status": "todo",
-                "description": "qtcloud-devops / qtcloud-product / qtcloud-code"
+                "id": "story-catalog-switch",
+                "title": "产品空间切换",
+                "taskId": "task-catalog",
+                "phase": "mvp",
+                "status": "done",
+                "description": "在多个产品间切换（每个产品 = 一个项目空间），集中管理所有产品"
               }
             ]
           },
           {
-            "id": "product-task-portfolio",
-            "title": "查看组合视图",
-            "activityId": "product-portfolio",
+            "id": "task-storymap",
+            "title": "刻画需求",
+            "activityId": "activity-planning",
             "order": 1,
             "stories": [
               {
-                "id": "product-story-10",
-                "title": "跨产品可视化对比",
-                "taskId": "product-task-portfolio",
-                "phase": "future",
+                "id": "story-map-view",
+                "title": "用户故事地图画布",
+                "taskId": "task-storymap",
+                "phase": "mvp",
+                "status": "inProgress",
+                "description": "在一块画布上看到用户故事地图的三层结构（活动层 / 任务层 / 故事卡），让所有人看到同一张产品地图"
+              },
+              {
+                "id": "story-map-activity-span",
+                "title": "活动跨列合并显示",
+                "taskId": "task-storymap",
+                "phase": "mvp",
+                "status": "inProgress",
+                "description": "活动跨列合并显示（一个活动横跨多个任务列），表达活动的真实跨度"
+              },
+              {
+                "id": "story-map-scroll",
+                "title": "双轴滚动浏览",
+                "taskId": "task-storymap",
+                "phase": "mvp",
+                "status": "inProgress",
+                "description": "横向、纵向双轴滚动浏览整张地图，在大量故事中定位"
+              },
+              {
+                "id": "story-map-release-fold",
+                "title": "版本行折叠",
+                "taskId": "task-storymap",
+                "phase": "mvp",
+                "status": "inProgress",
+                "description": "故事按 Release 版本行组织且行可折叠，聚焦某个发布版本的范围"
+              },
+              {
+                "id": "story-map-drag",
+                "title": "故事卡片拖拽",
+                "taskId": "task-storymap",
+                "phase": "mvp",
+                "status": "inProgress",
+                "description": "长按拖拽故事卡片、在任务列间重新组织，调整地图结构"
+              },
+              {
+                "id": "story-map-mvp-line",
+                "title": "MVP 发布线",
+                "taskId": "task-storymap",
+                "phase": "next",
                 "status": "todo",
-                "description": "成熟度、投入、版本时间线"
+                "description": "拖动 MVP 发布线（水平红线），标记当前版本与未来迭代的边界"
               }
             ]
           },
           {
-            "id": "product-task-decision",
-            "title": "记录决策",
-            "activityId": "product-portfolio",
+            "id": "task-portfolio-decision",
+            "title": "组合决策",
+            "activityId": "activity-planning",
             "order": 2,
             "stories": [
               {
-                "id": "product-story-11",
-                "title": "记录产品决策",
-                "taskId": "product-task-decision",
+                "id": "story-portfolio-view",
+                "title": "产品组合视图",
+                "taskId": "task-portfolio-decision",
+                "phase": "next",
+                "status": "todo",
+                "description": "查看跨产品的组合视图（成熟度、投入分布、版本时间线），做产品取舍与资源分配"
+              },
+              {
+                "id": "story-portfolio-relation",
+                "title": "产品关系管理",
+                "taskId": "task-portfolio-decision",
+                "phase": "next",
+                "status": "todo",
+                "description": "管理产品之间的关系（跨系统边界的关系优先于产品内部知识），支撑产品体系的整体决策"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "activity-spec",
+        "title": "规格描述",
+        "order": 1,
+        "tasks": [
+          {
+            "id": "task-event-storm",
+            "title": "事件风暴",
+            "activityId": "activity-spec",
+            "order": 0,
+            "stories": [
+              {
+                "id": "story-event-storm",
+                "title": "事件风暴梳理规格",
+                "taskId": "task-event-storm",
+                "phase": "next",
+                "status": "todo",
+                "description": "以事件风暴梳理产品规格（领域事件、业务规则），准确描述产品行为"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "activity-qa",
+        "title": "QA 验收",
+        "order": 2,
+        "tasks": [
+          {
+            "id": "task-testcase",
+            "title": "用例管理",
+            "activityId": "activity-qa",
+            "order": 0,
+            "stories": [
+              {
+                "id": "story-testcase",
+                "title": "管理验收用例",
+                "taskId": "task-testcase",
                 "phase": "future",
                 "status": "todo",
-                "description": "决策关联产品与依据，可追溯"
+                "description": "管理验收用例，验证产品是否满足需求"
+              }
+            ]
+          },
+          {
+            "id": "task-agile-qa",
+            "title": "敏捷验收",
+            "activityId": "activity-qa",
+            "order": 1,
+            "stories": [
+              {
+                "id": "story-agile-qa",
+                "title": "敏捷验收方法",
+                "taskId": "task-agile-qa",
+                "phase": "research",
+                "status": "todo",
+                "description": "找到比用例更敏捷的成体系验收方法，跟上敏捷节奏"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "activity-operations",
+        "title": "产品运营",
+        "order": 3,
+        "tasks": [
+          {
+            "id": "task-data-collection",
+            "title": "收集运营数据",
+            "activityId": "activity-operations",
+            "order": 0,
+            "stories": [
+              {
+                "id": "story-data-collection",
+                "title": "收集运营数据",
+                "taskId": "task-data-collection",
+                "phase": "next",
+                "status": "todo",
+                "description": "收集实际运营数据（包括各类观测数据），持续检验产品"
+              }
+            ]
+          },
+          {
+            "id": "task-data-driven",
+            "title": "数据驱动找结构",
+            "activityId": "activity-operations",
+            "order": 1,
+            "stories": [
+              {
+                "id": "story-data-driven",
+                "title": "数据驱动产品结构",
+                "taskId": "task-data-driven",
+                "phase": "next",
+                "status": "todo",
+                "description": "通过不断填入有用数据发现合适的产品管理结构，让产品体系在真实使用中自然生长"
               }
             ]
           }
