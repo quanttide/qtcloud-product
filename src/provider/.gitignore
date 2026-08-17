@@ -1,0 +1,12 @@
+# Go 构建产物与本地缓存
+/bin/
+*.exe
+*.test
+*.out
+
+# 本地构建缓存（构建时用 -cache 目录置于模块内时忽略）
+.gocache/
+.gopath/
+.gomodcache/
+.provider-bin/
+.check-bin/

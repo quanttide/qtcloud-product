@@ -16,6 +16,8 @@ assets/data/
 - 文件名为产品的唯一命名（`qtcloud-devops` 等），用于 URL 与识别场景；文件内 `title` 字段为前台展示标题（量潮DevOps云 等）。
 - **CLI 负责加工种子数据**：生成、校验、更新 `assets/data/` 下的数据文件（新增/删除产品时同步更新 `manifest.json`）。
 - **Studio 只负责渲染**：`src/studio` 先读 manifest 清单，再按清单加载各产品文件并渲染，不内嵌数据、不修改数据。
+- **Provider 只负责服务**：`src/provider` 以只读 API 服务种子数据（`/manifest`、`/products`、`/products/{name}`），
+  数据契约与 Studio 渲染模型对齐（见 `src/provider/docs/index.md`）；本地开发用 `DATA_DIR` 直读本目录。
 
 > 实现说明：`src/studio/assets` 是指向仓库根 `assets/` 的符号链接（git 可跟踪），
 > 因此 Flutter 包内资产路径（`assets/data/manifest.json`、`assets/data/products/`）即仓库根的数据文件。
@@ -26,4 +28,5 @@ assets/data/
 - `assets/data/` — 种子数据（JSON，CLI 加工）
 - `docs/` — 产品文档（MyST Markdown，发布到 GitHub Pages）
 - `src/studio/` — QtCloud Studio（Flutter 应用，渲染种子数据）
+- `src/provider/` — QtCloud Provider（Go 服务端，只读服务种子数据，结构对齐 qtcloud-secret）
 - `examples/` — 示例与工具脚本
