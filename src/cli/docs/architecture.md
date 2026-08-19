@@ -107,3 +107,7 @@ Plan + 预览，不产生任何副作用。
 - 网络 git 操作（push / ls-remote）一律走系统 `git` 命令，不用 git2
   （credential helper 兼容性，见 AGENTS.md）
 - 发布 tag 前缀约定与 qtcloud-devops 一致（`cli/vX.Y.Z`）
+
+## 相关文档
+
+- [规格对比：事件风暴规格 vs 当前 CLI](specification-gap.md) — 规格与实现的差距及演进方向
