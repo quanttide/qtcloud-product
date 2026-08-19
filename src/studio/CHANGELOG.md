@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.0-beta.1] - 2026-08-18
+
+### Added
+
+- 开发看板：以开发任务（DevTask，由用户故事经再分析拆解）为卡片，四列流转（未开始/进行中/评审中/已完成），拖拽移动状态；卡片标注来源用户故事（可追溯）。
+- 验收模块：交付门禁，验收项按用户故事分组（需求验收 + 异常场景验收，后者从事件风暴异常事件派生，实现规格→验收可追溯）；顶部通过率与状态统计、筛选（全部/未验收/通过/失败），失败记录原因（打回开发）。
+- 运营模块：维护者反思 + 用户反馈双 Tab；反馈按类型（建议/问题/表扬）与处理状态（未处理/已采纳/已转需求）管理，点击流转；采纳的反馈回流到需求。
+- 运营种子数据：6 个产品各注入维护者反思与用户反馈（反馈与验收失败项呼应，形成"打回开发 → 用户反馈 → 已转需求"闭环）。
+
+### Changed
+
+- 需求页故事状态扩展评审中（review），与开发看板评审列统一。
+- 默认页面改为量潮产品云（qtcloud-product）。
+
 ## [0.1.0-alpha.8] - 2026-08-17
 
 ### Added
