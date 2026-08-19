@@ -134,5 +134,95 @@
         ]
       }
     ]
+  },
+  "eventStorm": {
+    "id": "es-qthealth",
+    "productId": "qthealth",
+    "title": "健康记录 · 事件风暴",
+    "description": "高频记录替代低频量表：每日问答、情绪日记驱动健康画像与提醒。",
+    "nodes": [
+      {
+        "id": "user",
+        "type": "actor",
+        "title": "用户"
+      },
+      {
+        "id": "cmd-question",
+        "type": "command",
+        "title": "提交每日问答",
+        "actorId": "user"
+      },
+      {
+        "id": "cmd-mood",
+        "type": "command",
+        "title": "记录情绪",
+        "actorId": "user"
+      },
+      {
+        "id": "cmd-remind",
+        "type": "command",
+        "title": "推送提醒",
+        "actorId": "user"
+      },
+      {
+        "id": "agg-diary",
+        "type": "aggregate",
+        "title": "情绪日记"
+      },
+      {
+        "id": "query-profile",
+        "type": "queryModel",
+        "title": "健康画像"
+      },
+      {
+        "id": "evt-1",
+        "type": "event",
+        "title": "每日问答已提交",
+        "order": 0,
+        "commandId": "cmd-question",
+        "aggregateId": "agg-diary",
+        "actorId": "user"
+      },
+      {
+        "id": "evt-2",
+        "type": "event",
+        "title": "情绪已记录",
+        "order": 1,
+        "commandId": "cmd-mood",
+        "aggregateId": "agg-diary",
+        "actorId": "user"
+      },
+      {
+        "id": "evt-3",
+        "type": "event",
+        "title": "健康画像已更新",
+        "order": 2,
+        "commandId": "cmd-mood",
+        "aggregateId": "agg-diary",
+        "queryModelId": "query-profile",
+        "actorId": "user"
+      },
+      {
+        "id": "evt-x1",
+        "type": "event",
+        "title": "提醒已推送失败",
+        "order": 3,
+        "commandId": "cmd-remind",
+        "aggregateId": "agg-diary",
+        "actorId": "user",
+        "isException": true,
+        "description": "推送服务不可用，提醒延迟，下个周期重试。",
+        "fromEventId": "evt-3"
+      },
+      {
+        "id": "evt-4",
+        "type": "event",
+        "title": "提醒已推送",
+        "order": 4,
+        "commandId": "cmd-remind",
+        "aggregateId": "agg-diary",
+        "actorId": "user"
+      }
+    ]
   }
 }

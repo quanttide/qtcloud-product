@@ -336,5 +336,147 @@
         ]
       }
     ]
+  },
+  "eventStorm": {
+    "id": "es-qtcloud-devops",
+    "productId": "qtcloud-devops",
+    "title": "生命周期 · 事件风暴",
+    "description": "从计划到部署的生命周期事件流：plan → code → build → test → release → deploy，质量门禁守护发布。",
+    "nodes": [
+      {
+        "id": "dev",
+        "type": "actor",
+        "title": "研发"
+      },
+      {
+        "id": "cmd-plan",
+        "type": "command",
+        "title": "提交计划",
+        "actorId": "dev"
+      },
+      {
+        "id": "cmd-code",
+        "type": "command",
+        "title": "提交代码",
+        "actorId": "dev"
+      },
+      {
+        "id": "cmd-build",
+        "type": "command",
+        "title": "触发构建",
+        "actorId": "dev"
+      },
+      {
+        "id": "cmd-test",
+        "type": "command",
+        "title": "运行测试",
+        "actorId": "dev"
+      },
+      {
+        "id": "cmd-release",
+        "type": "command",
+        "title": "批准发布",
+        "actorId": "dev"
+      },
+      {
+        "id": "cmd-deploy",
+        "type": "command",
+        "title": "执行部署",
+        "actorId": "dev"
+      },
+      {
+        "id": "agg-pipeline",
+        "type": "aggregate",
+        "title": "流水线"
+      },
+      {
+        "id": "agg-artifact",
+        "type": "aggregate",
+        "title": "制品库"
+      },
+      {
+        "id": "policy-quality",
+        "type": "policy",
+        "title": "质量门禁：测试未通过不得发布"
+      },
+      {
+        "id": "query-env",
+        "type": "queryModel",
+        "title": "环境状态视图"
+      },
+      {
+        "id": "evt-1",
+        "type": "event",
+        "title": "计划已提交",
+        "order": 0,
+        "commandId": "cmd-plan",
+        "aggregateId": "agg-pipeline",
+        "actorId": "dev"
+      },
+      {
+        "id": "evt-2",
+        "type": "event",
+        "title": "代码已提交",
+        "order": 1,
+        "commandId": "cmd-code",
+        "aggregateId": "agg-pipeline",
+        "actorId": "dev"
+      },
+      {
+        "id": "evt-3",
+        "type": "event",
+        "title": "构建已完成",
+        "order": 2,
+        "commandId": "cmd-build",
+        "aggregateId": "agg-artifact",
+        "actorId": "dev"
+      },
+      {
+        "id": "evt-x1",
+        "type": "event",
+        "title": "构建已失败",
+        "order": 3,
+        "commandId": "cmd-build",
+        "aggregateId": "agg-pipeline",
+        "actorId": "dev",
+        "isException": true,
+        "description": "编译或打包失败，流水线中断，等待修复后重试。",
+        "fromEventId": "evt-3"
+      },
+      {
+        "id": "evt-4",
+        "type": "event",
+        "title": "测试已通过",
+        "order": 4,
+        "commandId": "cmd-test",
+        "aggregateId": "agg-pipeline",
+        "policyIds": [
+          "policy-quality"
+        ],
+        "actorId": "dev"
+      },
+      {
+        "id": "evt-5",
+        "type": "event",
+        "title": "发布已批准",
+        "order": 5,
+        "commandId": "cmd-release",
+        "aggregateId": "agg-artifact",
+        "policyIds": [
+          "policy-quality"
+        ],
+        "actorId": "dev"
+      },
+      {
+        "id": "evt-6",
+        "type": "event",
+        "title": "部署已完成",
+        "order": 6,
+        "commandId": "cmd-deploy",
+        "aggregateId": "agg-pipeline",
+        "queryModelId": "query-env",
+        "actorId": "dev"
+      }
+    ]
   }
 }

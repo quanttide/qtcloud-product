@@ -183,5 +183,102 @@
         ]
       }
     ]
+  },
+  "eventStorm": {
+    "id": "es-qtcloud-code",
+    "productId": "qtcloud-code",
+    "title": "编程工作流 · 事件风暴",
+    "description": "Review → Reflect → Fix 范式：规则引擎第一道扫描，根因追溯在人脑，工具提供 trace 支持。",
+    "nodes": [
+      {
+        "id": "coder",
+        "type": "actor",
+        "title": "程序员"
+      },
+      {
+        "id": "cmd-review",
+        "type": "command",
+        "title": "触发评审",
+        "actorId": "coder"
+      },
+      {
+        "id": "cmd-reflect",
+        "type": "command",
+        "title": "追溯根因",
+        "actorId": "coder"
+      },
+      {
+        "id": "cmd-fix",
+        "type": "command",
+        "title": "提交修复",
+        "actorId": "coder"
+      },
+      {
+        "id": "agg-rule",
+        "type": "aggregate",
+        "title": "规则引擎"
+      },
+      {
+        "id": "agg-review",
+        "type": "aggregate",
+        "title": "评审记录"
+      },
+      {
+        "id": "policy-root",
+        "type": "policy",
+        "title": "根因优先：先追溯根因再修复"
+      },
+      {
+        "id": "evt-1",
+        "type": "event",
+        "title": "代码已提交",
+        "order": 0,
+        "commandId": "cmd-review",
+        "aggregateId": "agg-rule",
+        "actorId": "coder"
+      },
+      {
+        "id": "evt-2",
+        "type": "event",
+        "title": "规则已扫描",
+        "order": 1,
+        "commandId": "cmd-review",
+        "aggregateId": "agg-rule",
+        "actorId": "coder"
+      },
+      {
+        "id": "evt-x1",
+        "type": "event",
+        "title": "规则违规已发现",
+        "order": 2,
+        "commandId": "cmd-review",
+        "aggregateId": "agg-rule",
+        "actorId": "coder",
+        "isException": true,
+        "description": "规则引擎第一道扫描命中违规点，进入根因追溯。",
+        "fromEventId": "evt-2"
+      },
+      {
+        "id": "evt-3",
+        "type": "event",
+        "title": "根因已定位",
+        "order": 3,
+        "commandId": "cmd-reflect",
+        "aggregateId": "agg-review",
+        "policyIds": [
+          "policy-root"
+        ],
+        "actorId": "coder"
+      },
+      {
+        "id": "evt-4",
+        "type": "event",
+        "title": "修复已提交",
+        "order": 4,
+        "commandId": "cmd-fix",
+        "aggregateId": "agg-review",
+        "actorId": "coder"
+      }
+    ]
   }
 }

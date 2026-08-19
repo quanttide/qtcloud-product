@@ -206,5 +206,145 @@
         ]
       }
     ]
+  },
+  "eventStorm": {
+    "id": "es-qtcloud-product",
+    "productId": "qtcloud-product",
+    "title": "产品策划 · 事件风暴",
+    "description": "从产品登记到版本发布的事件流：产品越来越多、决策越来越难，需要集中的产品目录与决策记录。",
+    "nodes": [
+      {
+        "id": "pm",
+        "type": "actor",
+        "title": "产品经理"
+      },
+      {
+        "id": "cmd-register",
+        "type": "command",
+        "title": "登记产品",
+        "actorId": "pm"
+      },
+      {
+        "id": "cmd-requirement",
+        "type": "command",
+        "title": "刻画需求",
+        "actorId": "pm"
+      },
+      {
+        "id": "cmd-review",
+        "type": "command",
+        "title": "评审故事",
+        "actorId": "pm"
+      },
+      {
+        "id": "cmd-mvp",
+        "type": "command",
+        "title": "划定 MVP 边界",
+        "actorId": "pm"
+      },
+      {
+        "id": "cmd-release",
+        "type": "command",
+        "title": "发布版本",
+        "actorId": "pm"
+      },
+      {
+        "id": "agg-catalog",
+        "type": "aggregate",
+        "title": "产品目录"
+      },
+      {
+        "id": "agg-requirements",
+        "type": "aggregate",
+        "title": "需求池"
+      },
+      {
+        "id": "agg-storymap",
+        "type": "aggregate",
+        "title": "故事地图"
+      },
+      {
+        "id": "agg-plan",
+        "type": "aggregate",
+        "title": "发布计划"
+      },
+      {
+        "id": "policy-mvp",
+        "type": "policy",
+        "title": "MVP 范围规则：仅 mvp 阶段故事进入本次发布"
+      },
+      {
+        "id": "query-catalog",
+        "type": "queryModel",
+        "title": "产品清单视图"
+      },
+      {
+        "id": "query-timeline",
+        "type": "queryModel",
+        "title": "版本时间线"
+      },
+      {
+        "id": "evt-1",
+        "type": "event",
+        "title": "产品已登记",
+        "order": 0,
+        "commandId": "cmd-register",
+        "aggregateId": "agg-catalog",
+        "actorId": "pm",
+        "queryModelId": "query-catalog"
+      },
+      {
+        "id": "evt-2",
+        "type": "event",
+        "title": "需求已刻画",
+        "order": 1,
+        "commandId": "cmd-requirement",
+        "aggregateId": "agg-requirements",
+        "actorId": "pm"
+      },
+      {
+        "id": "evt-3",
+        "type": "event",
+        "title": "故事已评审",
+        "order": 2,
+        "commandId": "cmd-review",
+        "aggregateId": "agg-storymap",
+        "actorId": "pm"
+      },
+      {
+        "id": "evt-x1",
+        "type": "event",
+        "title": "故事已被驳回",
+        "order": 3,
+        "commandId": "cmd-review",
+        "aggregateId": "agg-storymap",
+        "actorId": "pm",
+        "isException": true,
+        "description": "评审不通过的故事退回重写，需求与故事地图保持可信。",
+        "fromEventId": "evt-3"
+      },
+      {
+        "id": "evt-4",
+        "type": "event",
+        "title": "MVP 边界已划定",
+        "order": 4,
+        "commandId": "cmd-mvp",
+        "aggregateId": "agg-plan",
+        "policyIds": [
+          "policy-mvp"
+        ],
+        "actorId": "pm"
+      },
+      {
+        "id": "evt-5",
+        "type": "event",
+        "title": "版本已发布",
+        "order": 5,
+        "commandId": "cmd-release",
+        "aggregateId": "agg-plan",
+        "queryModelId": "query-timeline",
+        "actorId": "pm"
+      }
+    ]
   }
 }
