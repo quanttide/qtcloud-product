@@ -15,14 +15,14 @@ CLI 以用户故事文档为事实源（`docs/dev-guide/prd/stories/stories/<act
 
 ## 模块划分
 
-| 模块 | 职责 | 输入 | 输出 |
-|------|------|------|------|
-| `requirement` | 用户故事文档管理（解析/增删改查/状态） | 故事文档 | 结构化用户故事 |
-| `story` | 故事地图视图与渲染数据加工 | 用户故事 | 地图视图 / `assets/data/` JSON |
-| `roadmap` | 版本计划（MVP / 未来迭代） | 用户故事 | 计划文档 |
-| `release` | 发布管理（status / audit / publish） | git + CHANGELOG + Cargo.toml | tag / Release |
-| `doctor` | 环境诊断 | 工具链 | 诊断报告 |
-| `source` | git 命令封装 | — | — |
+| 模块 | 职责 | 输入 | 输出 | 文档 |
+|------|------|------|------|------|
+| `requirement` | 用户故事文档管理（解析/增删改查/状态） | 故事文档 | 结构化用户故事 | [modules/requirement.md](modules/requirement.md) |
+| `story` | 故事地图视图与渲染数据加工 | 用户故事 | 地图视图 / `assets/data/` JSON | [modules/story.md](modules/story.md) |
+| `roadmap` | 版本计划（MVP / 未来迭代） | 用户故事 | 计划文档 | [modules/roadmap.md](modules/roadmap.md) |
+| `release` | 发布管理（status / audit / publish） | git + CHANGELOG + Cargo.toml | tag / Release | [modules/release.md](modules/release.md) |
+| `doctor` | 环境诊断 | 工具链 | 诊断报告 | [modules/doctor.md](modules/doctor.md) |
+| `source` | git 命令封装 | — | — | — |
 
 ## status / audit / action 三分法
 
@@ -91,15 +91,9 @@ StoryMapCanvas 渲染（活动分组 → 任务列 → 故事卡片）
 
 ## 发布流程
 
-```
-release publish
-  ├─ Plan    release audit（6 项门禁，不通过即中止）
-  ├─ Confirm 交互确认（-y 跳过）
-  └─ Execute git tag → git push origin <tag> → gh release create
-```
-
+三阶段架构（Plan → Confirm → Execute），预检不通过即中止，绝不带病发布。
 版本号格式 `vX.Y.Z` 或 `scope/vX.Y.Z`（如 `cli/v0.1.0`）。dry-run 只走
-Plan + 预览，不产生任何副作用。
+Plan + 预览，不产生任何副作用。详见 [modules/release.md](modules/release.md)。
 
 ## 设计决策
 

@@ -20,6 +20,19 @@ cargo install --path .
 
 ## 用法
 
+### 快速导览
+
+```bash
+qtcloud-product requirement list/show/add/edit/remove/status   # 需求梳理
+qtcloud-product story status/map/export                        # 用户故事地图
+qtcloud-product roadmap status/plan                            # 版本计划
+qtcloud-product release status/audit/publish                   # 发布管理
+qtcloud-product doctor status                                  # 环境诊断
+qtcloud-product status / audit / help                          # 概览与导览
+```
+
+按功能模块的完整命令、数据格式与规则见 [docs/](docs/index.md)（模块文档）。
+
 ### 需求梳理（核心）
 
 ```bash
@@ -115,6 +128,8 @@ cargo run -- release status
 
 ## 相关文档
 
+- [文档索引](docs/index.md) — 按模块组织的完整文档
 - [架构：status / audit / action](docs/architecture.md)
+- [规格对比：事件风暴规格 vs 当前 CLI](docs/specification-gap.md)
 - [路线图](ROADMAP.md)
 - [变更记录](CHANGELOG.md)
