@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.0-alpha.8] - 2026-08-17
+
+### Added
+
+- 规格页事件风暴 MVP：数据驱动的事件流时间线（领域事件按时间顺序展开，点击查看命令/参与者/聚合/策略/查询模型详情）。
+- 事件风暴种子数据：6 个产品各注入事件流场景（含异常分支事件，红色警示并标注分岔来源）。
+- 部署缓存策略：main.dart.js 与种子数据 JSON 改为 no-cache 上传，发布后浏览器普通刷新即可见新数据；Service Worker 卸载补丁自动清理旧缓存。
+
+### Changed
+
+- 时间线双轨结构：异常事件从源事件分岔（不占主线位置），详情展示"分岔自"关系。
+
 ## [0.1.0-alpha.7] - 2026-08-17
 
 ### Fixed
