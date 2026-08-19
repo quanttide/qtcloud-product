@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../models/product_models.dart';
+import 'acceptance_screen.dart';
+import 'kanban_screen.dart';
+import 'operations_screen.dart';
 import 'requirement_screen.dart';
 import 'specification_screen.dart';
 
@@ -9,8 +12,17 @@ enum ProductModule {
   /// 需求：用户故事地图看板（二维矩阵）
   requirements,
 
-  /// 规格：事件风暴（规划中）
+  /// 规格：事件风暴（数据驱动事件流时间线）
   specification,
+
+  /// 开发：看板（以状态列管理开发过程流转）
+  kanban,
+
+  /// 验收：交付门禁（按故事逐项验证是否符合需求与规格）
+  acceptance,
+
+  /// 运营：维护者反思 + 用户反馈（观测与回流）
+  operations,
 }
 
 /// 产品云主界面（参考项目管理软件）：
@@ -31,7 +43,11 @@ class _ProductCloudScreenState extends State<ProductCloudScreen> {
   @override
   void initState() {
     super.initState();
-    _selectedProduct = widget.products.first;
+    // 默认进入量潮产品云（qtcloud-product，本应用承载的产品），缺失时回退第一个
+    _selectedProduct = widget.products.firstWhere(
+      (p) => p.name == 'qtcloud-product',
+      orElse: () => widget.products.first,
+    );
   }
 
   void _openProduct(Product product) {
@@ -180,6 +196,19 @@ class _ProductCloudScreenState extends State<ProductCloudScreen> {
                     ProductModule.specification => SpecificationScreen(
                         eventStorm: _selectedProduct.eventStorm,
                       ),
+                    ProductModule.kanban => KanbanScreen(
+                        devTasks: _selectedProduct.devTasks,
+                        stories: _selectedProduct.stories,
+                      ),
+                    ProductModule.acceptance => AcceptanceScreen(
+                        acceptances: _selectedProduct.acceptances,
+                        stories: _selectedProduct.stories,
+                      ),
+                    ProductModule.operations => OperationsScreen(
+                        thoughts: _selectedProduct.maintainerThoughts,
+                        feedback: _selectedProduct.userFeedback,
+                        stories: _selectedProduct.stories,
+                      ),
                   },
                 ),
               ],
@@ -263,6 +292,27 @@ class _SpaceNav extends StatelessWidget {
             label: '规格',
             selected: selectedModule == ProductModule.specification,
             onTap: () => onSelectModule(ProductModule.specification),
+          ),
+          _NavItem(
+            key: const Key('nav-kanban'),
+            icon: Icons.dashboard_outlined,
+            label: '开发',
+            selected: selectedModule == ProductModule.kanban,
+            onTap: () => onSelectModule(ProductModule.kanban),
+          ),
+          _NavItem(
+            key: const Key('nav-acceptance'),
+            icon: Icons.fact_check_outlined,
+            label: '验收',
+            selected: selectedModule == ProductModule.acceptance,
+            onTap: () => onSelectModule(ProductModule.acceptance),
+          ),
+          _NavItem(
+            key: const Key('nav-operations'),
+            icon: Icons.trending_up_outlined,
+            label: '运营',
+            selected: selectedModule == ProductModule.operations,
+            onTap: () => onSelectModule(ProductModule.operations),
           ),
           const Spacer(),
           const Padding(

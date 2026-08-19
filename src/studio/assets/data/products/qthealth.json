@@ -25,7 +25,7 @@
                 "title": "每日问答持续记录状态",
                 "taskId": "record-task-1",
                 "phase": "mvp",
-                "status": "inProgress",
+                "status": "review",
                 "description": "替代问题多、难以坚持的量表"
               },
               {
@@ -224,5 +224,105 @@
         "actorId": "user"
       }
     ]
-  }
+  },
+  "devTasks": [
+    {
+      "id": "devt-1",
+      "title": "每日问答组件",
+      "storyId": "health-story-1",
+      "status": "done"
+    },
+    {
+      "id": "devt-2",
+      "title": "情绪日记存储",
+      "storyId": "health-story-2",
+      "status": "review"
+    },
+    {
+      "id": "devt-3",
+      "title": "健康画像计算服务",
+      "storyId": "health-story-3",
+      "status": "inProgress"
+    },
+    {
+      "id": "devt-4",
+      "title": "提醒推送渠道",
+      "storyId": "health-story-4",
+      "status": "todo"
+    }
+  ],
+  "acceptances": [
+    {
+      "id": "acc-1",
+      "title": "每日问答持续记录状态",
+      "storyId": "health-story-1",
+      "source": "story",
+      "status": "pending"
+    },
+    {
+      "id": "acc-2",
+      "title": "简单高频的初期场景",
+      "storyId": "health-story-2",
+      "source": "story",
+      "status": "pending"
+    },
+    {
+      "id": "acc-3",
+      "title": "记录情绪日记",
+      "storyId": "health-story-3",
+      "source": "story",
+      "status": "pending"
+    },
+    {
+      "id": "acc-4",
+      "title": "提醒推送失败时降级为应用内提示",
+      "storyId": "health-story-1",
+      "source": "spec",
+      "eventId": "evt-x1",
+      "status": "failed",
+      "note": "无降级路径，已退回开发"
+    }
+  ],
+  "maintainerThoughts": [
+    {
+      "id": "thought-1",
+      "content": "每日问答的留存比预期好，但提醒推送失败时没有任何降级，错过提醒的人就流失了。",
+      "author": "产品经理",
+      "createdAt": "5月15日",
+      "storyId": "health-story-1"
+    },
+    {
+      "id": "thought-2",
+      "content": "初期场景要简单高频，情绪日记的模板化太重了，先砍到最简单的记录。",
+      "author": "产品经理",
+      "createdAt": "5月19日",
+      "storyId": "health-story-3"
+    }
+  ],
+  "userFeedback": [
+    {
+      "id": "fb-1",
+      "content": "提醒没推送，打开 App 也没有提示，当天就漏记了。",
+      "type": "issue",
+      "createdAt": "5月14日",
+      "status": "toRequirements",
+      "storyId": "health-story-1"
+    },
+    {
+      "id": "fb-2",
+      "content": "希望问答能按周生成小结，看到自己的变化。",
+      "type": "suggestion",
+      "createdAt": "5月17日",
+      "status": "open",
+      "storyId": "health-story-1"
+    },
+    {
+      "id": "fb-3",
+      "content": "每天一个问题的形式没压力，已经连续记了十天。",
+      "type": "praise",
+      "createdAt": "5月13日",
+      "status": "adopted",
+      "storyId": "health-story-1"
+    }
+  ]
 }

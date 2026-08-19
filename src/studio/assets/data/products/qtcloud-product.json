@@ -81,7 +81,7 @@
                 "title": "用户故事地图画布",
                 "taskId": "task-review-requirement",
                 "phase": "mvp",
-                "status": "inProgress",
+                "status": "review",
                 "description": "用户要在一块画布上看到用户故事地图的三层结构（活动/任务/故事卡）"
               },
               {
@@ -346,5 +346,118 @@
         "actorId": "pm"
       }
     ]
-  }
+  },
+  "devTasks": [
+    {
+      "id": "devt-1",
+      "title": "实现产品登记表单与清单页",
+      "storyId": "story-catalog-register",
+      "status": "done"
+    },
+    {
+      "id": "devt-2",
+      "title": "产品清单接口与数据校验",
+      "storyId": "story-catalog-register",
+      "status": "review"
+    },
+    {
+      "id": "devt-3",
+      "title": "产品空间切换器组件",
+      "storyId": "story-catalog-switch",
+      "status": "inProgress"
+    },
+    {
+      "id": "devt-4",
+      "title": "故事卡片编辑与合并拆分",
+      "storyId": "story-review-edit",
+      "status": "todo"
+    },
+    {
+      "id": "devt-5",
+      "title": "MVP 发布线拖拽交互",
+      "storyId": "story-review-drag",
+      "status": "todo"
+    }
+  ],
+  "acceptances": [
+    {
+      "id": "acc-1",
+      "title": "登记产品后表单清空并提示成功，产品出现在清单中",
+      "storyId": "story-catalog-register",
+      "source": "story",
+      "status": "passed"
+    },
+    {
+      "id": "acc-2",
+      "title": "切换器可在各产品空间间切换，空间数据互不干扰",
+      "storyId": "story-catalog-switch",
+      "source": "story",
+      "status": "passed"
+    },
+    {
+      "id": "acc-3",
+      "title": "画布按活动/任务/故事三层展示，MVP 线区分发布阶段",
+      "storyId": "story-review-canvas",
+      "source": "story",
+      "status": "pending"
+    },
+    {
+      "id": "acc-4",
+      "title": "拖拽故事卡片可重组地图结构",
+      "storyId": "story-review-drag",
+      "source": "story",
+      "status": "pending"
+    },
+    {
+      "id": "acc-5",
+      "title": "评审不通过的故事退回重写，需求与故事地图保持可信",
+      "storyId": "story-review-canvas",
+      "source": "spec",
+      "eventId": "evt-x1",
+      "status": "failed",
+      "note": "驳回后地图未刷新，缺陷已退回开发"
+    }
+  ],
+  "maintainerThoughts": [
+    {
+      "id": "thought-1",
+      "content": "alpha.8 发布后，规格页的事件风暴成了评审的主战场，双轨画法让大家第一次直观看到异常分支，讨论比之前具体很多。",
+      "author": "产品经理",
+      "createdAt": "5月18日",
+      "storyId": "story-event-storm"
+    },
+    {
+      "id": "thought-2",
+      "content": "开发看板改成开发任务后，评审中的任务有了明确的下一跳；但验收入口的引导还不够，任务完成后容易停在那里。",
+      "author": "研发",
+      "createdAt": "5月20日",
+      "storyId": "story-testcase"
+    }
+  ],
+  "userFeedback": [
+    {
+      "id": "fb-1",
+      "content": "规格页异常分支多了以后主线很长，希望能折叠异常分支只看主线。",
+      "type": "suggestion",
+      "createdAt": "5月19日",
+      "status": "open",
+      "storyId": "story-event-storm"
+    },
+    {
+      "id": "fb-2",
+      "content": "事件风暴双轨画法让异常一目了然，比文字 PRD 直观太多。",
+      "type": "praise",
+      "createdAt": "5月17日",
+      "status": "adopted",
+      "storyId": "story-event-storm"
+    },
+    {
+      "id": "fb-3",
+      "content": "开发看板在触屏设备上拖拽不灵敏，希望能有按钮方式流转状态。",
+      "type": "issue",
+      "createdAt": "5月21日",
+      "status": "toRequirements",
+      "storyId": "story-review-drag"
+    }
+  ]
 }

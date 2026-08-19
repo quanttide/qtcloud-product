@@ -57,7 +57,7 @@
                 "title": "规则引擎 + AI 审查",
                 "taskId": "code-task-mode",
                 "phase": "mvp",
-                "status": "inProgress",
+                "status": "review",
                 "description": "--mode llm，默认模式"
               },
               {
@@ -280,5 +280,111 @@
         "actorId": "coder"
       }
     ]
-  }
+  },
+  "devTasks": [
+    {
+      "id": "devt-1",
+      "title": "规则引擎扫描服务",
+      "storyId": "code-story-1",
+      "status": "done"
+    },
+    {
+      "id": "devt-2",
+      "title": "评审结果面板",
+      "storyId": "code-story-2",
+      "status": "review"
+    },
+    {
+      "id": "devt-3",
+      "title": "根因 trace 图组件",
+      "storyId": "code-story-3",
+      "status": "inProgress"
+    },
+    {
+      "id": "devt-4",
+      "title": "修复提交快捷入口",
+      "storyId": "code-story-4",
+      "status": "todo"
+    }
+  ],
+  "acceptances": [
+    {
+      "id": "acc-1",
+      "title": "扫描多语言代码",
+      "storyId": "code-story-1",
+      "source": "story",
+      "status": "passed"
+    },
+    {
+      "id": "acc-2",
+      "title": "发现代码问题",
+      "storyId": "code-story-2",
+      "source": "story",
+      "status": "passed"
+    },
+    {
+      "id": "acc-3",
+      "title": "仅规则引擎快速扫描",
+      "storyId": "code-story-3",
+      "source": "story",
+      "status": "passed"
+    },
+    {
+      "id": "acc-4",
+      "title": "规则引擎 + AI 审查",
+      "storyId": "code-story-4",
+      "source": "story",
+      "status": "pending"
+    },
+    {
+      "id": "acc-5",
+      "title": "规则违规被发现时，问题列表标注规则来源与严重级别",
+      "storyId": "code-story-2",
+      "source": "spec",
+      "eventId": "evt-x1",
+      "status": "pending"
+    }
+  ],
+  "maintainerThoughts": [
+    {
+      "id": "thought-1",
+      "content": "规则引擎的扫描大家用得最多，AI 审查的接受度还不高，可能是误报率。先统计 AI 建议的采纳率再决定怎么调。",
+      "author": "研发",
+      "createdAt": "5月17日",
+      "storyId": "code-story-4"
+    },
+    {
+      "id": "thought-2",
+      "content": "代码切片的提取目前只支持单文件，多文件调用链的切片才是重构时真正需要的。",
+      "author": "产品经理",
+      "createdAt": "5月20日",
+      "storyId": "code-story-7"
+    }
+  ],
+  "userFeedback": [
+    {
+      "id": "fb-1",
+      "content": "AI 审查的修改建议希望标注规则来源和严重级别，不然不敢直接采纳。",
+      "type": "suggestion",
+      "createdAt": "5月16日",
+      "status": "open",
+      "storyId": "code-story-2"
+    },
+    {
+      "id": "fb-2",
+      "content": "扫描大仓库时结果出来太慢，希望能先出规则引擎结果再叠加 AI。",
+      "type": "issue",
+      "createdAt": "5月19日",
+      "status": "toRequirements",
+      "storyId": "code-story-3"
+    },
+    {
+      "id": "fb-3",
+      "content": "安全重命名符号的预览很稳，改完没出过错。",
+      "type": "praise",
+      "createdAt": "5月15日",
+      "status": "adopted",
+      "storyId": "code-story-10"
+    }
+  ]
 }

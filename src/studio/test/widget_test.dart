@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:studio/main.dart';
+import 'package:studio/models/acceptance_models.dart';
+import 'package:studio/models/dev_task_models.dart';
 import 'package:studio/models/event_storm_models.dart';
+import 'package:studio/models/operations_models.dart';
 import 'package:studio/models/product_models.dart';
 import 'package:studio/models/story_map_models.dart';
+import 'package:studio/screens/product_cloud_screen.dart';
 import 'package:studio/widgets/event_storming_canvas.dart';
 
 /// 组件测试使用内置夹具数据，不依赖 `assets/data/` 种子数据。
@@ -43,9 +47,12 @@ void main() {
     expect(find.text('测试产品甲'), findsWidgets);
     expect(find.text('alpha'), findsWidgets);
 
-    // 产品空间侧边导航：需求 / 规格
+    // 产品空间侧边导航：需求 / 规格 / 开发 / 验收 / 运营
     expect(find.byKey(const Key('nav-requirements')), findsOneWidget);
     expect(find.byKey(const Key('nav-specification')), findsOneWidget);
+    expect(find.byKey(const Key('nav-kanban')), findsOneWidget);
+    expect(find.byKey(const Key('nav-acceptance')), findsOneWidget);
+    expect(find.byKey(const Key('nav-operations')), findsOneWidget);
 
     // 需求看板：活动层（跨列合并）与任务层
     expect(find.text('活动甲'), findsOneWidget);
@@ -204,6 +211,240 @@ void main() {
     expect(find.text('活动甲'), findsOneWidget);
   });
 
+  testWidgets('开发看板：状态列渲染 + 拖拽流转', (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(1280, 860);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(MyApp(products: products));
+
+    await tester.tap(find.byKey(const Key('nav-kanban')));
+    await tester.pumpAndSettle();
+
+    // 四列 + 计数
+    expect(find.byKey(const Key('kanban-column-todo')), findsOneWidget);
+    expect(find.byKey(const Key('kanban-column-inProgress')), findsOneWidget);
+    expect(find.byKey(const Key('kanban-column-review')), findsOneWidget);
+    expect(find.byKey(const Key('kanban-column-done')), findsOneWidget);
+    expect(find.text('未开始'), findsOneWidget);
+    expect(find.text('进行中'), findsOneWidget);
+    expect(find.text('评审中'), findsOneWidget);
+    expect(find.text('已完成'), findsOneWidget);
+
+    // 任务卡片按状态入列（开发任务，非用户故事）：
+    // devt-1 done / devt-2 review / devt-3 inProgress / devt-4 todo
+    expect(find.text('实现产品登记表单'), findsOneWidget);
+    expect(find.text('产品清单接口'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('kanban-column-review')),
+        matching: find.text('产品清单接口'),
+      ),
+      findsOneWidget,
+    );
+    // 任务卡片标注来源故事（可追溯）
+    expect(find.text('← 故事甲一'), findsNWidgets(2));
+
+    // 拖拽：devt-1（已完成列）→ 未开始列（向左拖）
+    await tester.timedDrag(
+      find.text('实现产品登记表单'),
+      const Offset(-700, 0),
+      const Duration(milliseconds: 500),
+    );
+    await tester.pumpAndSettle();
+
+    // 拖入后：未开始列计数 1 → 2（devt-4 + 拖入 devt-1）
+    expect(find.text('实现产品登记表单'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('kanban-column-todo')),
+        matching: find.text('2'),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('kanban-column-done')),
+        matching: find.text('0'),
+      ),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('验收清单：按故事分组 + 状态切换 + 筛选', (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(1280, 860);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(MyApp(products: products));
+
+    await tester.tap(find.byKey(const Key('nav-acceptance')));
+    await tester.pumpAndSettle();
+
+    // 顶部统计：全部 3 / 通过 1 / 失败 1 / 未验收 1（通过率 33%）
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('stat-total')),
+        matching: find.text('3'),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('stat-passed')),
+        matching: find.text('1'),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('stat-failed')),
+        matching: find.text('1'),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('stat-pending')),
+        matching: find.text('1'),
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('33%'), findsOneWidget);
+
+    // 按故事分组：组头（故事标题 + 进度）
+    expect(find.text('故事甲一'), findsOneWidget);
+    expect(find.text('通过 1/1'), findsOneWidget);
+    expect(find.text('通过 0/1'), findsNWidgets(2));
+
+    // 验收项标题 + 来源徽标（需求验收 x2 / 异常场景 x1）+ 失败原因
+    expect(find.text('登记后表单清空并提示成功'), findsOneWidget);
+    expect(find.text('切换器空间互不干扰'), findsOneWidget);
+    expect(find.text('评审不通过的故事退回重写'), findsOneWidget);
+    expect(find.text('需求验收'), findsNWidgets(2));
+    expect(find.text('异常场景'), findsOneWidget);
+    expect(find.text('原因：驳回后地图未刷新'), findsOneWidget);
+
+    // 点击未验收项（acc-2）→ 通过
+    await tester.tap(find.byKey(const Key('acceptance-item-acc-2')));
+    await tester.pumpAndSettle();
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('stat-passed')),
+        matching: find.text('2'),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('stat-pending')),
+        matching: find.text('0'),
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('通过 1/1'), findsNWidgets(2));
+
+    // 点击已通过项（acc-1）→ 失败（默认原因：打回开发）
+    await tester.tap(find.byKey(const Key('acceptance-item-acc-1')));
+    await tester.pumpAndSettle();
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('stat-failed')),
+        matching: find.text('2'),
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('原因：验收未通过，已退回开发'), findsOneWidget);
+
+    // 筛选：失败 → 只显示失败项（acc-1 / acc-3），通过项被过滤
+    await tester.tap(find.byKey(const Key('filter-failed')));
+    await tester.pumpAndSettle();
+    expect(find.text('登记后表单清空并提示成功'), findsOneWidget);
+    expect(find.text('评审不通过的故事退回重写'), findsOneWidget);
+    expect(find.text('切换器空间互不干扰'), findsNothing);
+
+    // 恢复全部
+    await tester.tap(find.byKey(const Key('filter-all')));
+    await tester.pumpAndSettle();
+    expect(find.text('切换器空间互不干扰'), findsOneWidget);
+  });
+
+  testWidgets('运营：维护者反思 + 用户反馈双 Tab', (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(1280, 860);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(MyApp(products: products));
+
+    await tester.tap(find.byKey(const Key('nav-operations')));
+    await tester.pumpAndSettle();
+
+    // 双 Tab + 计数
+    expect(find.byKey(const Key('ops-tab-thoughts')), findsOneWidget);
+    expect(find.byKey(const Key('ops-tab-feedback')), findsOneWidget);
+    expect(find.text('维护者反思'), findsOneWidget);
+    expect(find.text('用户反馈'), findsOneWidget);
+
+    // 默认 Tab：维护者反思（最新在前）+ 作者徽标 + 关联故事
+    expect(find.text('看板改成开发任务后，验收入口的引导还不够。'), findsOneWidget);
+    expect(find.text('规格页的事件风暴成了评审的主战场，讨论具体很多。'), findsOneWidget);
+    expect(find.text('产品经理'), findsOneWidget);
+    expect(find.text('研发'), findsOneWidget);
+    expect(find.text('← 故事甲一'), findsOneWidget);
+    expect(find.text('← 故事甲三'), findsOneWidget);
+    // 反馈内容默认不可见
+    expect(find.text('异常分支多了以后主线很长，希望能折叠。'), findsNothing);
+
+    // 切到用户反馈
+    await tester.tap(find.byKey(const Key('ops-tab-feedback')));
+    await tester.pumpAndSettle();
+    expect(find.text('异常分支多了以后主线很长，希望能折叠。'), findsOneWidget);
+    expect(find.text('触屏拖拽不灵敏，希望有按钮流转。'), findsOneWidget);
+    // 类型徽标：建议 / 问题
+    expect(find.text('建议'), findsOneWidget);
+    expect(find.text('问题'), findsOneWidget);
+    // 状态：未处理（fb-1） / 已转需求（fb-2）
+    expect(find.text('未处理'), findsOneWidget);
+    expect(find.text('已转需求'), findsOneWidget);
+
+    // 点击状态循环：已转需求 → 未处理
+    await tester.tap(find.byKey(const Key('feedback-status-fb-2')));
+    await tester.pumpAndSettle();
+    expect(find.text('未处理'), findsNWidgets(2));
+
+    // 再点：未处理 → 已采纳
+    await tester.tap(find.byKey(const Key('feedback-status-fb-2')));
+    await tester.pumpAndSettle();
+    expect(find.text('已采纳'), findsOneWidget);
+  });
+
+  testWidgets('默认页面为量潮产品云（qtcloud-product）', (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(1280, 860);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
+    Product simple(String id, String name, String title) => Product(
+          id: id,
+          name: name,
+          title: title,
+          tagline: '',
+          designIdea: '',
+          storyMap: StoryMap(id: 'm-$id', name: name),
+        );
+
+    await tester.pumpWidget(MaterialApp(
+      home: ProductCloudScreen(products: [
+        simple('a', 'qtcloud-devops', 'DevOps 测试'),
+        simple('b', 'qtcloud-product', '产品云测试'),
+      ]),
+    ));
+    await tester.pumpAndSettle();
+
+    // 默认展示量潮产品云，而非第一个产品
+    expect(find.text('产品云测试'), findsWidgets);
+    expect(find.text('DevOps 测试'), findsNothing);
+  });
+
   testWidgets('Release 行可折叠与展开', (WidgetTester tester) async {
     tester.view.physicalSize = const Size(1280, 860);
     tester.view.devicePixelRatio = 1.0;
@@ -244,6 +485,88 @@ List<Product> _fixtureProducts() {
       title: '测试产品甲',
       tagline: '组件测试夹具：不依赖种子数据',
       designIdea: '夹具设计思路',
+      devTasks: const [
+        DevTask(
+          id: 'devt-1',
+          title: '实现产品登记表单',
+          storyId: 'story-1-1',
+          status: StoryStatus.done,
+        ),
+        DevTask(
+          id: 'devt-2',
+          title: '产品清单接口',
+          storyId: 'story-1-1',
+          status: StoryStatus.review,
+        ),
+        DevTask(
+          id: 'devt-3',
+          title: '空间切换器组件',
+          storyId: 'story-1-2',
+          status: StoryStatus.inProgress,
+        ),
+        DevTask(
+          id: 'devt-4',
+          title: '故事编辑表单',
+          storyId: 'story-1-3',
+          status: StoryStatus.todo,
+        ),
+      ],
+      acceptances: const [
+        AcceptanceItem(
+          id: 'acc-1',
+          title: '登记后表单清空并提示成功',
+          storyId: 'story-1-1',
+          status: AcceptanceStatus.passed,
+        ),
+        AcceptanceItem(
+          id: 'acc-2',
+          title: '切换器空间互不干扰',
+          storyId: 'story-1-2',
+          status: AcceptanceStatus.pending,
+        ),
+        AcceptanceItem(
+          id: 'acc-3',
+          title: '评审不通过的故事退回重写',
+          storyId: 'story-1-3',
+          source: AcceptanceSource.spec,
+          eventId: 'evt-rejected',
+          status: AcceptanceStatus.failed,
+          note: '驳回后地图未刷新',
+        ),
+      ],
+      maintainerThoughts: const [
+        MaintainerThought(
+          id: 'thought-1',
+          content: '规格页的事件风暴成了评审的主战场，讨论具体很多。',
+          author: '产品经理',
+          createdAt: '5月18日',
+          storyId: 'story-1-3',
+        ),
+        MaintainerThought(
+          id: 'thought-2',
+          content: '看板改成开发任务后，验收入口的引导还不够。',
+          author: '研发',
+          createdAt: '5月20日',
+          storyId: 'story-1-1',
+        ),
+      ],
+      userFeedback: const [
+        UserFeedback(
+          id: 'fb-1',
+          content: '异常分支多了以后主线很长，希望能折叠。',
+          type: FeedbackType.suggestion,
+          createdAt: '5月19日',
+          storyId: 'story-1-3',
+        ),
+        UserFeedback(
+          id: 'fb-2',
+          content: '触屏拖拽不灵敏，希望有按钮流转。',
+          type: FeedbackType.issue,
+          createdAt: '5月21日',
+          status: FeedbackStatus.toRequirements,
+          storyId: 'story-1-1',
+        ),
+      ],
       eventStorm: EventStorming(
         id: 'es-alpha',
         productId: 'alpha',
@@ -310,7 +633,7 @@ List<Product> _fixtureProducts() {
               _story('story-1-2', '故事甲二', 'task-1-1', 'future', 'todo'),
             ]),
             _task('task-1-2', '任务甲二', 'act-1', [
-              _story('story-1-3', '故事甲三', 'task-1-2', 'mvp', 'inProgress'),
+              _story('story-1-3', '故事甲三', 'task-1-2', 'mvp', 'review'),
             ]),
             // 扩展任务列数，保证矩阵水平溢出（滚动条拇指渲染的测试前提）
             _task('task-1-3', '任务甲三', 'act-1', [

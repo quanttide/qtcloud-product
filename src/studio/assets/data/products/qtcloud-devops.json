@@ -65,7 +65,7 @@
                 "title": "进行代码质量审查",
                 "taskId": "lifecycle-task-2",
                 "phase": "mvp",
-                "status": "inProgress",
+                "status": "review",
                 "description": "code audit --json"
               }
             ]
@@ -478,5 +478,112 @@
         "actorId": "dev"
       }
     ]
-  }
+  },
+  "devTasks": [
+    {
+      "id": "devt-1",
+      "title": "迭代计划与待办列表",
+      "storyId": "lifecycle-plan-1",
+      "status": "done"
+    },
+    {
+      "id": "devt-2",
+      "title": "子模块同步任务",
+      "storyId": "lifecycle-code-1",
+      "status": "review"
+    },
+    {
+      "id": "devt-3",
+      "title": "代码质量审查面板",
+      "storyId": "lifecycle-code-3",
+      "status": "inProgress"
+    },
+    {
+      "id": "devt-4",
+      "title": "版本发布按钮与确认流",
+      "storyId": "lifecycle-release-2",
+      "status": "todo"
+    }
+  ],
+  "acceptances": [
+    {
+      "id": "acc-1",
+      "title": "查看迭代计划与待办",
+      "storyId": "lifecycle-plan-1",
+      "source": "story",
+      "status": "passed"
+    },
+    {
+      "id": "acc-2",
+      "title": "同步子模块",
+      "storyId": "lifecycle-code-1",
+      "source": "story",
+      "status": "passed"
+    },
+    {
+      "id": "acc-3",
+      "title": "查看构建状态",
+      "storyId": "lifecycle-build-1",
+      "source": "story",
+      "status": "passed"
+    },
+    {
+      "id": "acc-4",
+      "title": "进行代码质量审查",
+      "storyId": "lifecycle-code-3",
+      "source": "story",
+      "status": "pending"
+    },
+    {
+      "id": "acc-5",
+      "title": "构建失败时展示失败原因与日志，可一键重试",
+      "storyId": "lifecycle-build-1",
+      "source": "spec",
+      "eventId": "evt-x1",
+      "status": "failed",
+      "note": "失败原因未透出，已打回开发"
+    }
+  ],
+  "maintainerThoughts": [
+    {
+      "id": "thought-1",
+      "content": "构建失败的事件虽然接入了审计，但失败原因还埋在日志里，一线看不到。这次要把原因透出到构建状态页。",
+      "author": "运维",
+      "createdAt": "5月15日",
+      "storyId": "lifecycle-build-1"
+    },
+    {
+      "id": "thought-2",
+      "content": "发布预检开始有人在用了，但预检项还是我们拍脑袋定的，应该让每次发布卡住的地方沉淀成预检项。",
+      "author": "研发",
+      "createdAt": "5月19日",
+      "storyId": "lifecycle-release-1"
+    }
+  ],
+  "userFeedback": [
+    {
+      "id": "fb-1",
+      "content": "构建失败时只显示红色状态，看不出是哪个阶段挂的，希望直接看到失败原因和日志。",
+      "type": "issue",
+      "createdAt": "5月16日",
+      "status": "toRequirements",
+      "storyId": "lifecycle-build-1"
+    },
+    {
+      "id": "fb-2",
+      "content": "同步子模块时希望能预览每个子模块的变更量再确认。",
+      "type": "suggestion",
+      "createdAt": "5月18日",
+      "status": "open",
+      "storyId": "lifecycle-code-1"
+    },
+    {
+      "id": "fb-3",
+      "content": "审计把构建到发布整条链路串起来了，排查问题快很多。",
+      "type": "praise",
+      "createdAt": "5月14日",
+      "status": "adopted",
+      "storyId": "lifecycle-build-3"
+    }
+  ]
 }

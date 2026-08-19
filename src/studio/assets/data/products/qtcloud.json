@@ -25,7 +25,7 @@
                 "title": "作为日常工作平台",
                 "taskId": "daily-task-1",
                 "phase": "mvp",
-                "status": "inProgress",
+                "status": "review",
                 "description": "逐步替代 WorkBuddy、Zed 等，成为最高频入口"
               }
             ]
@@ -302,5 +302,99 @@
         "actorId": "admin"
       }
     ]
-  }
+  },
+  "devTasks": [
+    {
+      "id": "devt-1",
+      "title": "产品注册表单",
+      "storyId": "qtcloud-story-1",
+      "status": "done"
+    },
+    {
+      "id": "devt-2",
+      "title": "工作台配置面板",
+      "storyId": "qtcloud-story-2",
+      "status": "review"
+    },
+    {
+      "id": "devt-3",
+      "title": "数据同步任务调度",
+      "storyId": "qtcloud-story-3",
+      "status": "inProgress"
+    }
+  ],
+  "acceptances": [
+    {
+      "id": "acc-1",
+      "title": "原型承载替代 PRD",
+      "storyId": "qtcloud-story-4",
+      "source": "story",
+      "status": "passed"
+    },
+    {
+      "id": "acc-2",
+      "title": "公开产品路线与理解方式",
+      "storyId": "qtcloud-story-5",
+      "source": "story",
+      "status": "passed"
+    },
+    {
+      "id": "acc-3",
+      "title": "作为日常工作平台",
+      "storyId": "qtcloud-story-1",
+      "source": "story",
+      "status": "pending"
+    },
+    {
+      "id": "acc-4",
+      "title": "同步失败时可重试，数据不丢失",
+      "storyId": "qtcloud-story-1",
+      "source": "spec",
+      "eventId": "evt-x1",
+      "status": "failed",
+      "note": "同步失败后本地缓存丢失，已打回开发"
+    }
+  ],
+  "maintainerThoughts": [
+    {
+      "id": "thought-1",
+      "content": "原型承载替代 PRD 的方向被验证了，评审时大家直接操作原型，比读文档快得多。",
+      "author": "产品经理",
+      "createdAt": "5月14日",
+      "storyId": "qtcloud-story-4"
+    },
+    {
+      "id": "thought-2",
+      "content": "同步失败的兜底还太脆，一旦失败本地缓存就丢了，这在移动场景下不可接受。",
+      "author": "架构",
+      "createdAt": "5月18日",
+      "storyId": "qtcloud-story-1"
+    }
+  ],
+  "userFeedback": [
+    {
+      "id": "fb-1",
+      "content": "同步失败后重新打开，之前改的内容丢了。",
+      "type": "issue",
+      "createdAt": "5月16日",
+      "status": "toRequirements",
+      "storyId": "qtcloud-story-1"
+    },
+    {
+      "id": "fb-2",
+      "content": "希望能把常用的板块固定到首页，不用每次进后台找。",
+      "type": "suggestion",
+      "createdAt": "5月17日",
+      "status": "open",
+      "storyId": "qtcloud-story-12"
+    },
+    {
+      "id": "fb-3",
+      "content": "路线图和理解方式公开后，对接时对齐成本低了很多。",
+      "type": "praise",
+      "createdAt": "5月12日",
+      "status": "adopted",
+      "storyId": "qtcloud-story-5"
+    }
+  ]
 }

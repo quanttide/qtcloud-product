@@ -15,6 +15,7 @@ enum ReleasePhase {
 enum StoryStatus {
   todo('To Do'),
   inProgress('In Progress'),
+  review('Review'),
   done('Done');
 
   final String label;
