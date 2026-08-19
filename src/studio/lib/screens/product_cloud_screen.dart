@@ -177,8 +177,9 @@ class _ProductCloudScreenState extends State<ProductCloudScreen> {
                     ProductModule.requirements => RequirementScreen(
                         stories: _selectedProduct.stories,
                       ),
-                    ProductModule.specification =>
-                      const SpecificationScreen(),
+                    ProductModule.specification => SpecificationScreen(
+                        eventStorm: _selectedProduct.eventStorm,
+                      ),
                   },
                 ),
               ],

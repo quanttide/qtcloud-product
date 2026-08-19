@@ -1,3 +1,4 @@
+import 'event_storm_models.dart';
 import 'story_map_models.dart';
 
 /// 产品
@@ -16,6 +17,9 @@ class Product {
   final String tagline; // 一句话定位
   final String designIdea; // 设计思路
   final StoryMap storyMap; // 保留旧格式兼容
+
+  /// 事件风暴规格（可选：种子数据未提供时为 null）
+  final EventStorming? eventStorm;
   
   // 缓存转换后的Story列表
   late final List<Story> _stories;
@@ -28,6 +32,7 @@ class Product {
     required this.tagline,
     required this.designIdea,
     required this.storyMap,
+    this.eventStorm,
   }) {
     // 从旧的StoryMap转换为新的Story列表
     _stories = LegacyConverter.fromLegacyStoryMap({
@@ -60,6 +65,7 @@ class Product {
         'tagline': tagline,
         'designIdea': designIdea,
         'storyMap': storyMap.toJson(),
+        if (eventStorm != null) 'eventStorm': eventStorm!.toJson(),
       };
 
   factory Product.fromJson(Map<String, dynamic> json) {
@@ -70,6 +76,9 @@ class Product {
       tagline: json['tagline'] as String? ?? '',
       designIdea: json['designIdea'] as String? ?? '',
       storyMap: StoryMap.fromJson(json['storyMap'] as Map<String, dynamic>),
+      eventStorm: json['eventStorm'] != null
+          ? EventStorming.fromJson(json['eventStorm'] as Map<String, dynamic>)
+          : null,
     );
   }
 }
