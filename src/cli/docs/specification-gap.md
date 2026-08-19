@@ -54,44 +54,75 @@ CLI 现状：`requirement add`（手工录入）→ `story map`（生成视图�
 | 事件风暴：规格活动 | — | ❌ 缺 |
 | 验收活动（用例管理） | — | ❌ 缺 |
 
-## 待补命令（按优先级）
+## 待补命令（双轨设计）
 
-### P0：需求侧质量门禁
+**双轨制**：动词层（阶段工作流，围绕工作流程深度组织）+ 名词层（原子对象操作，保留现状）。
 
-```
-qtcloud-product requirement audit
-```
-
-对照规格 R4/R5/R6/R8 检查全部故事：视角一致性（"用户要…"句式）、颗粒度一致性、素材来源可追溯、明确性（能写出规格）。门禁不达标退出码 1（复用现有 audit 架构）。
-
-### P0：需求评审流程
+### 动词层：阶段工作流
 
 ```
-qtcloud-product requirement review          # 地图级评审：待评审 → 已定稿
-qtcloud-product requirement mark --no-user-perspective <id>   # 标记不符合用户视角内容
+clarify                          # 需求阶段工作流
+  ├─ clarify capture --source    # ①捕捉：日志 → 候选故事（AI 辅助）
+  ├─ clarify classify            # ②划分层级：活动/任务/故事（AI 辅助，可查依据）
+  ├─ clarify adjust <id>         # ③人工调整：层级移动/标记/合并拆分
+  ├─ clarify review              # ④需求评审：视角校验/格式确认（R3 人审）
+  └─ clarify finalize            # ⑤定稿：地图冻结 → 进入下一阶段（R8 门禁）
+
+design                           # 规格阶段工作流
+  ├─ design storm                # ①事件风暴：领域事件/业务规则
+  └─ design spec                 # ②规格文档：生成 specification.md
+
+plan                             # 迭代阶段工作流
+  ├─ plan status                 # ①版本计划状态（现 roadmap status）
+  ├─ plan roadmap                # ②生成版本计划（现 roadmap plan）
+  └─ plan mvp-line               # ③MVP 发布线
+
+accept                           # 验收阶段工作流
+  ├─ accept case                 # ①用例管理
+  └─ accept review               # ②敏捷验收
+
+operate                          # 运营阶段工作流
+  ├─ operate observe             # ①收集运营数据
+  └─ operate analyze             # ②数据驱动找结构
 ```
 
-- 地图（活动目录）获得评审状态，定稿后进入下一阶段
-- 评审是需求评审环节：校验视角一致性、格式确认
+**深度组织原则：**
 
-### P1：日志捕捉
+- 动词子命令 = 阶段的流程步骤，按执行顺序排列（捕捉 → 划分 → 调整 → 评审 → 定稿），内部结构即阶段方法论
+- 动词 = 工作台：不带参数运行显示该阶段当前状态 + 下一步建议（聚合各名词 status）
+- 动词编排，名词执行：`clarify review` 内部聚合 `requirement status` + `story map` + 需求 audit；`plan roadmap` 委托 `roadmap plan`
+- 动词是流程门禁：`clarify finalize` 前置检查（评审通过、颗粒度一致、素材可追溯），不通过拒绝进入 `design`——R3/R8 在流程层强制
+
+### 名词层：原子对象操作（保留）
 
 ```
-qtcloud-product requirement capture --source <日志流/时间段>
+requirement list / show / add / edit / remove / status
+story status / map / export
+roadmap status / plan
+release status / audit / publish      # release 保留：跨阶段交付动作，不属于五阶段
+doctor status
 ```
 
-- 从原始素材捕捉用户故事（先捕捉出格式），AI 辅助划分层级（活动/任务/故事细节）
-- 产出带 `source` 的候选故事列表，经人工调整后入库
-
-### P1：frontmatter 扩展
+### 名词层 frontmatter 扩展
 
 ```
 source: 2026-08-19/qtcloud-product   # 素材来源（R6）
 persona: 产研负责人                   # 用户画像（R7）
 ```
 
+### 对齐映射
+
+| 动词（阶段） | 档案（stage） | 阶段方法角色 | 规格对应 |
+|-------------|-------------|-------------|---------|
+| `clarify` | requirement.md 需求活动 | 产品策划 | E1–E8、R3–R9 |
+| `design` | specification.md（事件风暴） | 架构师 | 事件流/业务规则 |
+| `plan` | 迭代活动 | 项目经理 | MVP 发布线 |
+| `accept` | 验收活动 | QA | 用例 |
+| `operate` | 运营活动 | 产品运营 | 运营数据 |
+
 ## 演进原则
 
 - 保持"用户故事文档是事实源、Studio 只渲染"的架构不变
 - 捕捉/评审是对 `requirement` 模块的扩展，不引入新的领域抽象
 - 需求侧 audit 复用 status / audit / action 三分法，与 release audit 并列
+- 动词层编排名词层，不复制名词实现；名词层保持现状兼容

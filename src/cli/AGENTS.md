@@ -65,11 +65,24 @@ credential helper（如 `gh auth setup-git`），不存在此问题。
 | **audit** | ✅ 源码/系统 | ✅ 标准/门禁 | ❌ |
 | **action** | ✅ | ✅ | ✅ 执行 |
 
+### 双轨命令组织：动词工作流 + 名词原子操作
+
+名词层（requirement / story / roadmap / release / doctor）是原子对象操作，
+保持现状兼容；动词层（clarify / design / plan / accept / operate）是阶段工作流，
+围绕工作流程深度组织，是演进方向。
+
+- 动词子命令 = 阶段的流程步骤，按执行顺序排列（如 clarify：capture → classify → adjust → review → finalize）
+- 动词 = 工作台：不带参数运行显示该阶段当前状态 + 下一步建议（聚合各名词 status）
+- **动词编排，名词执行**：动词内部委托名词实现，不复制名词逻辑
+- 动词是流程门禁：`clarify finalize` 前置检查不通过即拒绝进入下一阶段（规格 R3/R8 在流程层强制）
+- 跨阶段聚合动作（status / audit / help）与 release 保持现状
+
 ## 命令一览
 
-- `requirement list / show / add / edit / remove / status` — 用户故事管理
-- `story status / map / export` — 故事地图视图与数据加工
-- `roadmap status / plan` — 版本计划
-- `release status / audit / publish` — 发布管理
-- `doctor status` — 环境诊断
+- 名词层：`requirement list / show / add / edit / remove / status` — 用户故事管理
+- 名词层：`story status / map / export` — 故事地图视图与数据加工
+- 名词层：`roadmap status / plan` — 版本计划
+- 名词层：`release status / audit / publish` — 发布管理
+- 名词层：`doctor status` — 环境诊断
+- 动词层（演进）：`clarify / design / plan / accept / operate` — 阶段工作流
 - `status / audit / help` — 概览与导览

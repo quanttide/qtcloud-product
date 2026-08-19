@@ -24,6 +24,40 @@ CLI 以用户故事文档为事实源（`docs/dev-guide/prd/stories/stories/<act
 | `doctor` | 环境诊断 | 工具链 | 诊断报告 | [modules/doctor.md](modules/doctor.md) |
 | `source` | git 命令封装 | — | — | — |
 
+## 命令组织：动词工作流 + 名词原子操作
+
+双轨制：**动词层**（阶段工作流，围绕工作流程深度组织）+ **名词层**（原子对象操作，保留现状）。
+
+### 名词层（现状，兼容）
+
+```
+requirement list / show / add / edit / remove / status
+story status / map / export
+roadmap status / plan
+release status / audit / publish
+doctor status
+```
+
+### 动词层（阶段工作流，演进方向）
+
+```
+clarify                          # 需求阶段：捕捉 → 划分 → 调整 → 评审 → 定稿
+design                           # 规格阶段：事件风暴 → 规格文档
+plan                             # 迭代阶段：版本计划 → MVP 发布线
+accept                           # 验收阶段：用例 → 敏捷验收
+operate                          # 运营阶段：观测 → 找结构
+```
+
+原则：
+
+- 动词子命令 = 阶段的流程步骤，按执行顺序排列——内部结构即阶段方法论
+- 动词 = 工作台：不带参数运行显示该阶段当前状态 + 下一步建议（聚合各名词 status）
+- **动词编排，名词执行**：动词内部委托名词实现（`clarify review` 聚合 `requirement status` + `story map` + 需求 audit），不复制名词逻辑
+- 动词是流程门禁：`clarify finalize` 前置检查不通过即拒绝进入下一阶段（规格 R3/R8 在流程层强制）
+- 跨阶段聚合动作（status / audit / help）与 release 保持名词/动词顶层不变
+
+对应关系：动词顶层 = 产品阶段镜像（clarify=策划、design=架构师、plan=项目经理、accept=QA、operate=运营），与档案 stage 组织一致。
+
 ## status / audit / action 三分法
 
 所有命令按输入来源和副作用分为三类：
