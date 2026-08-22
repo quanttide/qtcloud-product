@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.0-beta.2] - 2026-08-21
+
+### Changed
+
+- 需求页重构为**泳道式用户故事地图**：横向三层泳道（活动橙卡跨列合并 / 任务紫卡 / 故事白卡），任务与故事泳道每列画列边界竖线，纵向贯通对齐——同一列的活动归属、任务与卡片一目了然（泳道式划线，修复"只有看、不能用的示意图"层级绑定问题）。
+- 活动、任务与故事统一为卡片形态（层次配色区分：橙 / 紫 / 白）。
+
+### Added
+
+- 故事卡片信息：状态色点（待办灰 / 进行中蓝 / 评审中紫 / 已完成绿）+ 描述摘要 + hover 高亮与展开图标（修复"卡片只有标题、无法区分与操作"问题）。
+
 ## [0.1.0-beta.1] - 2026-08-18
 
 ### Added
