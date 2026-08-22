@@ -54,12 +54,14 @@ void main() {
     expect(find.byKey(const Key('nav-acceptance')), findsOneWidget);
     expect(find.byKey(const Key('nav-operations')), findsOneWidget);
 
-    // 需求看板：活动层（跨列合并）与任务层
+    // 需求看板：泳道式（活动泳道跨列合并为一张卡）
     expect(find.text('活动甲'), findsOneWidget);
     expect(find.text('活动乙'), findsOneWidget);
     expect(find.text('任务甲一'), findsOneWidget);
+    // 卡片信息：描述摘要（StoryCard 显示，解决"卡片只有标题"）
+    expect(find.text('作为产品经理，我要登记产品，以便形成可追溯的产品清单。'), findsOneWidget);
 
-    // Release 行（MVP 版本 / 未来迭代）
+    // Release 泳道（全局唯一版本头，可折叠）
     expect(find.byKey(const Key('release-toggle-MVP 版本')), findsOneWidget);
     expect(find.byKey(const Key('release-toggle-未来迭代')), findsOneWidget);
 
@@ -629,7 +631,14 @@ List<Product> _fixtureProducts() {
         activities: [
           _activity('act-1', '活动甲', [
             _task('task-1-1', '任务甲一', 'act-1', [
-              _story('story-1-1', '故事甲一', 'task-1-1', 'mvp', 'done'),
+              {
+                'id': 'story-1-1',
+                'title': '故事甲一',
+                'taskId': 'task-1-1',
+                'phase': 'mvp',
+                'status': 'done',
+                'description': '作为产品经理，我要登记产品，以便形成可追溯的产品清单。',
+              },
               _story('story-1-2', '故事甲二', 'task-1-1', 'future', 'todo'),
             ]),
             _task('task-1-2', '任务甲二', 'act-1', [
