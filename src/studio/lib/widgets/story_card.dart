@@ -4,8 +4,8 @@ import '../models/story_map_models.dart';
 /// 故事明细卡
 /// 代表一个 Story 的最小视觉单元 / 操作单元
 ///
-/// 信息约定：卡片展示标题 + 状态色点（待办/进行中/评审中/已完成）+ 描述摘要；
-/// 提供可交互的视觉暗示（hover 高亮 + 操作图标 + 点击/长按拖拽）。
+/// 信息约定：卡片只展示标题 + 状态色点（待办/进行中/评审中/已完成），
+/// 不做详情展示；提供可交互的视觉暗示（hover 高亮 + 操作图标 + 点击/长按拖拽）。
 class StoryCard extends StatefulWidget {
   final Story story;
   final VoidCallback? onTap;
@@ -36,7 +36,6 @@ class _StoryCardState extends State<StoryCard> {
   @override
   Widget build(BuildContext context) {
     final story = widget.story;
-    final description = story.description;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5.0),
@@ -114,20 +113,6 @@ class _StoryCardState extends State<StoryCard> {
                         ),
                     ],
                   ),
-                  // 描述摘要
-                  if (description != null && description.isNotEmpty) ...[
-                    const SizedBox(height: 4),
-                    Text(
-                      description,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 11,
-                        height: 1.3,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ],
                 ],
               ),
             ),

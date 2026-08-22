@@ -58,8 +58,6 @@ void main() {
     expect(find.text('活动甲'), findsOneWidget);
     expect(find.text('活动乙'), findsOneWidget);
     expect(find.text('任务甲一'), findsOneWidget);
-    // 卡片信息：描述摘要（StoryCard 显示，解决"卡片只有标题"）
-    expect(find.text('作为产品经理，我要登记产品，以便形成可追溯的产品清单。'), findsOneWidget);
 
     // Release 泳道（全局唯一版本头，可折叠）
     expect(find.byKey(const Key('release-toggle-MVP 版本')), findsOneWidget);
