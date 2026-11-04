@@ -31,4 +31,6 @@ src/studio/assets/data/
 - `docs/` — 产品文档（MyST Markdown，发布到 GitHub Pages）
 - `src/studio/` — QtCloud Studio（Flutter 应用，渲染种子数据）
 - `src/provider/` — QtCloud Provider（Go 服务端，只读服务种子数据，结构对齐 qtcloud-secret）
+- `src/site/` — 站点（React + Vite 静态站，脚手架对齐 qtclass-site，`site/*` tag 部署）
+- `src/lite/` — 轻量端（React + Vite，与 site 同构，`lite/*` tag 部署）
 - `examples/` — 示例与工具脚本
