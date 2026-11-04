@@ -15,7 +15,7 @@ concurrency:
 env:
   OSS_BUCKET: qtcloud-product-lite
   OSS_ENDPOINT: oss-cn-hangzhou.aliyuncs.com
-  CDN_DOMAIN: lite.product.quanttide.com
+  CDN_DOMAIN: lite.product.cloud.quanttide.com
 
 jobs:
   build-and-deploy:

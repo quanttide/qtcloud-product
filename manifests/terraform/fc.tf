@@ -86,7 +86,7 @@ resource "alicloud_fcv3_function" "this" {
   environment_variables = {
     OSS_BUCKET           = alicloud_oss_bucket.products.bucket
     OSS_ENDPOINT         = local.oss_endpoint
-    CORS_ALLOWED_ORIGINS = "https://product.cloud.quanttide.com,http://product.cloud.quanttide.com"
+    CORS_ALLOWED_ORIGINS = "https://studio.product.cloud.quanttide.com,http://studio.product.cloud.quanttide.com,https://product.cloud.quanttide.com,http://product.cloud.quanttide.com"
     ENV                  = var.environment
   }
 

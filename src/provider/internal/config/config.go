@@ -58,10 +58,10 @@ func Load() (*Config, error) {
 		return nil, fmt.Errorf("生产环境必须配置 OSS_BUCKET/OSS_ENDPOINT（拒绝 DATA_DIR 本地存储）")
 	}
 
-	// 浏览器跨源白名单（Web 客户端站点）；未配置时默认本产品 Web 域名
+	// 浏览器跨源白名单（Web 客户端站点）；未配置时默认 Studio（studio.*）与站点（product.cloud）两个域名
 	origins := os.Getenv("CORS_ALLOWED_ORIGINS")
 	if origins == "" {
-		origins = "https://product.cloud.quanttide.com,http://product.cloud.quanttide.com"
+		origins = "https://studio.product.cloud.quanttide.com,http://studio.product.cloud.quanttide.com,https://product.cloud.quanttide.com,http://product.cloud.quanttide.com"
 	}
 	for _, o := range strings.Split(origins, ",") {
 		if o = strings.TrimSpace(o); o != "" {

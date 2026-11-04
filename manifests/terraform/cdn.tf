@@ -1,5 +1,5 @@
 # =============================================================================
-# Studio CDN + DNS（product.cloud.quanttide.com）
+# Studio CDN + DNS（studio.product.cloud.quanttide.com）
 #
 # 链路：OSS 静态网站桶（studio-bucket.tf，私有）→ CDN 加速 + 私有回源鉴权
 #   → CNAME 接入（云解析）→ 用户浏览器
@@ -12,14 +12,14 @@
 #     ② 域名级开关：CDN 控制台「回源配置 → 阿里云OSS私有Bucket回源」开启，
 #        回源类型选「同账号回源（STS）」——该开关无公开 OpenAPI，
 #        且与 OSS 静态网站托管默认首页存在已知冲突，开启时按官方文档处理
-#   - 证书：*.quanttide.com 泛域名证书不匹配两层子域 product.cloud.quanttide.com，
+#   - 证书：*.quanttide.com 泛域名证书不匹配 studio.product.cloud.quanttide.com，
 #     须用单域名证书（acme.sh 签发，90 天自动续期；续期后 reloadcmd 重配 CDN），
 #     terraform 不管理证书内容（避免私钥入库）
 #   - 前置：quanttide.com 已完成 ICP 备案
 # =============================================================================
 
 resource "alicloud_cdn_domain_new" "studio" {
-  domain_name = "product.cloud.quanttide.com"
+  domain_name = "studio.product.cloud.quanttide.com"
   cdn_type    = "web"
 
   # 源站：OSS 静态网站桶（私有回源鉴权见上方说明）
@@ -91,7 +91,7 @@ resource "alicloud_cdn_domain_config" "studio_https_force" {
 
 resource "alicloud_alidns_record" "studio" {
   domain_name = "quanttide.com"
-  rr          = "product.cloud"
+  rr          = "studio.product.cloud"
   type        = "CNAME"
   value       = alicloud_cdn_domain_new.studio.cname
   ttl         = 600

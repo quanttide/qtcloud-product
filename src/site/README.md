@@ -34,7 +34,7 @@ npm run preview
 
 ## 部署
 
-`.github/workflows/deploy-site.yml`：推送 `site/*` tag（如 `site/v0.1.0`，由 `qtcloud-devops release publish` 创建）时构建静态站，上传 OSS 桶 `qtcloud-product-site` 并刷新 CDN `product.quanttide.com`。桶与子域尚未开通，首发前先在 `manifests/terraform` 补站点桶与 CDN。
+`.github/workflows/deploy-site.yml`：推送 `site/*` tag（如 `site/v0.1.0`，由 `qtcloud-devops release publish` 创建）时构建静态站，上传 OSS 桶 `qtcloud-product-site` 并刷新 CDN `product.cloud.quanttide.com`。桶与子域尚未开通，首发前先在 `manifests/terraform` 补站点桶与 CDN。
 
 ## 项目结构
 

@@ -1,6 +1,6 @@
 // CORS 中间件：支持浏览器端 Web 客户端（Studio Web）跨源访问。
 //
-// 背景：客户端 Web 站点（product.cloud.quanttide.com）与 provider（FC 域名）
+// 背景：客户端 Web 站点（Studio：studio.product.cloud.quanttide.com，站点：product.cloud.quanttide.com）与 provider（FC 域名）
 // 非同源，浏览器对 /products 等请求执行 CORS 预检。两个要点（对齐 qtcloud-secret）：
 //   - OPTIONS 预检直接 204 + CORS 头，不进入业务处理器
 //   - Allow-Origin 按白名单回显（精确匹配，防任意站点读取）
