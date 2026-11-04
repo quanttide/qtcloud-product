@@ -1,0 +1,77 @@
+# 发布 lite：推送 lite/* tag 时构建 Vite 静态站，上传 OSS 桶 qtcloud-product-lite 并刷新 CDN。
+# 脚手架与工作流对齐 qtclass（.github/workflows/deploy-lite.yml，Web 形态，非小程序）。
+
+name: Deploy Lite
+
+on:
+  push:
+    tags:
+      - 'lite/**'
+
+concurrency:
+  group: deploy-lite
+  cancel-in-progress: true
+
+env:
+  OSS_BUCKET: qtcloud-product-lite
+  OSS_ENDPOINT: oss-cn-hangzhou.aliyuncs.com
+  CDN_DOMAIN: lite.product.quanttide.com
+
+jobs:
+  build-and-deploy:
+    name: Build Lite & Deploy to OSS
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install
+        working-directory: src/lite
+        run: npm ci
+
+      - name: Build
+        working-directory: src/lite
+        run: npm run build
+
+      - name: Setup ossutil
+        uses: manyuanrong/setup-ossutil@v3.0
+        with:
+          endpoint: ${{ env.OSS_ENDPOINT }}
+          access-key-id: ${{ secrets.ALIYUN_ACCESS_KEY_ID }}
+          access-key-secret: ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }}
+
+      - name: Upload long-cache assets
+        working-directory: src/lite
+        run: |
+          ossutil cp dist/ oss://${{ env.OSS_BUCKET }}/ -r -f \
+            --exclude "index.html" --exclude "404.html" \
+            --meta "Cache-Control:public,max-age=31536000"
+
+      - name: Upload entry files
+        working-directory: src/lite
+        run: |
+          cp dist/index.html dist/404.html
+          ossutil cp dist/index.html oss://${{ env.OSS_BUCKET }}/index.html -f --meta "Cache-Control:no-cache"
+          ossutil cp dist/404.html oss://${{ env.OSS_BUCKET }}/404.html -f --meta "Cache-Control:no-cache"
+
+      - name: Refresh CDN
+        run: |
+          pip install aliyun-python-sdk-cdn
+          python -c "
+          from aliyunsdkcore.client import AcsClient
+          from aliyunsdkcdn.request.v20180510.RefreshObjectCachesRequest import RefreshObjectCachesRequest
+          import os
+          cli = AcsClient(os.environ['ALIYUN_ACCESS_KEY_ID'], os.environ['ALIYUN_ACCESS_KEY_SECRET'], 'cn-hangzhou')
+          req = RefreshObjectCachesRequest()
+          req.set_ObjectPath('https://${{ env.CDN_DOMAIN }}/')
+          req.set_ObjectType('Directory')
+          cli.do_action_with_exception(req)
+          "
+        env:
+          ALIYUN_ACCESS_KEY_ID: ${{ secrets.ALIYUN_ACCESS_KEY_ID }}
+          ALIYUN_ACCESS_KEY_SECRET: ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }}

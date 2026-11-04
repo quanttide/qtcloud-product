@@ -1,0 +1,22 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 12px;
+  width: min(760px, 100%);
+  margin: 0 auto;
+  padding: 0 1.1rem;
+}
+
+.page h1 {
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.page p {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--ink-soft);
+}
